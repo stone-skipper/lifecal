@@ -1,0 +1,23 @@
+{
+  "files": {
+    "main.css": "/lifecal/static/css/main.a617e044.chunk.css",
+    "main.js": "/lifecal/static/js/main.ca524252.chunk.js",
+    "main.js.map": "/lifecal/static/js/main.ca524252.chunk.js.map",
+    "runtime-main.js": "/lifecal/static/js/runtime-main.3e61efbf.js",
+    "runtime-main.js.map": "/lifecal/static/js/runtime-main.3e61efbf.js.map",
+    "static/js/2.574b5118.chunk.js": "/lifecal/static/js/2.574b5118.chunk.js",
+    "static/js/2.574b5118.chunk.js.map": "/lifecal/static/js/2.574b5118.chunk.js.map",
+    "static/js/3.7ac8bd37.chunk.js": "/lifecal/static/js/3.7ac8bd37.chunk.js",
+    "static/js/3.7ac8bd37.chunk.js.map": "/lifecal/static/js/3.7ac8bd37.chunk.js.map",
+    "index.html": "/lifecal/index.html",
+    "static/css/main.a617e044.chunk.css.map": "/lifecal/static/css/main.a617e044.chunk.css.map",
+    "static/js/2.574b5118.chunk.js.LICENSE.txt": "/lifecal/static/js/2.574b5118.chunk.js.LICENSE.txt",
+    "static/media/logo.6ce24c58.svg": "/lifecal/static/media/logo.6ce24c58.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.3e61efbf.js",
+    "static/js/2.574b5118.chunk.js",
+    "static/css/main.a617e044.chunk.css",
+    "static/js/main.ca524252.chunk.js"
+  ]
+}
