@@ -23,7 +23,7 @@ const Graph3 = () => {
     var t = 0;
     var xstep = 10;
     //   let yfactor = 0.00000006; original
-    var yfactor = 0.00000006;
+    var yfactor = 0.00000002;
 
     let data;
     let bar = xstep;
@@ -44,11 +44,11 @@ const Graph3 = () => {
       console.log()
 
       for (let i=1; i< data.getRowCount(); i++){
-       
+        console.log( parseInt(data.rows[i].arr[1]))
 yearsum.push(parseInt(data.rows[i].arr[1]) +parseInt(data.rows[i].arr[2])+parseInt(data.rows[i].arr[3]) + parseInt(data.rows[i].arr[4]) + parseInt(data.rows[i].arr[5]) + parseInt(data.rows[i].arr[6]))   
       }
-      console.log(yearsum)
       console.log( parseInt(data.rows[1].arr[2])/yearsum[0]*360)
+   
 
     };
 
@@ -77,30 +77,41 @@ yearsum.push(parseInt(data.rows[i].arr[1]) +parseInt(data.rows[i].arr[2])+parseI
       let ax, ay;
       let by, cy, dy, ey, fy;
 
-      //speed contro
-    //   if (yfactor > 0.00000006) {
-    //     yfactor = yfactor - 0.000000003;
-    //   }
+      // speed control
+      // if (yfactor < 0.00000006) {
+      //   yfactor = yfactor + 0.0000000001;
+      // }
 
     //   if (bar < xstep * (data.getRowCount() - 1)) {
     //     bar = bar + xstep;
     //   }
-      let gap = 5;
-      p.background(p.color("#EBEBEB"));
+      let gap = 200;
+      p.background(p.color("black"));
 p.translate(width/2, height/2)
+p.rotate(p.radians(270) + p.radians(360*1/(data.getRowCount()-1)))
 
       let arcA1, arcA2;
-      for (let i=1; i<= data.getRowCount(); i++){
-        p.strokeWeight(2); 
+      for (let i=1; i<= data.getRowCount()-1; i++){
+        p.strokeWeight(3); 
         p.noFill();
   p.stroke(colorAlpha("grey", 0.5));
         //   p.arc(width/2, height/2, xstep*i, xstep*i, 0, p.radians(360*parseInt(data.rows[i].arr[1])/yearsum[i-1]));
-        p.line(0,0,0,yearsum[i-1]*yfactor)
-        p.stroke(colorAlpha("#3D7FFF", 1));
+        //all
+        p.line(0,gap,0,yearsum[i-1]*yfactor+gap)
 
-                // p.line(0,0,0, parseInt(data.rows[i].arr[1])/yearsum[i-1]*500)
+        //asia
+        p.stroke(colorAlpha("#FF603D", 1));
+       p.line(0,gap,0, parseInt(data.rows[i].arr[1])/yearsum[i-1]*yearsum[i-1]*yfactor+gap);
 
-        p.rotate(p.radians(360*1/data.getRowCount()));
+       //africa
+       p.stroke(colorAlpha("#FDAF00", 1));
+       p.line(0,parseInt(data.rows[i].arr[1])/yearsum[i-1]*yearsum[i-1]*yfactor+gap, 0,parseInt(data.rows[i].arr[1])/yearsum[i-1]*yearsum[i-1]*yfactor+ parseInt(data.rows[i].arr[2])/yearsum[i-1]*yearsum[i-1]*yfactor+gap);
+       
+       //europe
+       p.stroke(colorAlpha("skyblue", 1));
+      //  p.line(0,parseInt(data.rows[i].arr[1])/yearsum[i-1]*yearsum[i-1]*yfactor+ parseInt(data.rows[i].arr[2])/yearsum[i-1]*yearsum[i-1]*yfactor+gap, 0,parseInt(data.rows[i].arr[1])/yearsum[i-1]*yearsum[i-1]*yfactor+ parseInt(data.rows[i].arr[2])/yearsum[i-1]*yearsum[i-1]*yfactor+ parseInt(data.rows[i].arr[3])/yearsum[i-1]*yearsum[i-1]*yfactor+gap);
+
+        p.rotate(p.radians(360*1/(data.getRowCount()-1)));
 
       }
     };

@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import * as p5 from "p5";
-import { motion } from "framer-motion";
+import { animate, motion } from "framer-motion";
 import store from "../store";
 import { Link } from "react-router-dom";
 import dataTable from "../media/test.csv";
@@ -22,8 +22,9 @@ const Graph = () => {
     let y = 0;
     var t = 0;
     var xstep = 8;
-    //   let yfactor = 0.00000006; original
-    var yfactor = 0.00000025;
+      let yfactor = 0.00000006; 
+      var animstatus = false;
+    // var yfactor = 0.00000025;
 
     let data;
     let bar = xstep;
@@ -55,12 +56,27 @@ const Graph = () => {
       p.background(p.color("EBEBEB"));
       p.noStroke();
     };
-
+    function animateGraph(){
+      if (yfactor >= 0.00000006) {
+        yfactor = yfactor - 0.000000002;}
+      
+      if (bar < xstep * (data.getRowCount() - 1)) {
+        bar = bar + xstep;
+      }
+    }
     function colorAlpha(aColor, alpha) {
       var c = p.color(aColor);
       return p.color(
         "rgba(" + [p.red(c), p.green(c), p.blue(c), alpha].join(",") + ")"
       );
+    }
+     p.mouseClicked=()=> {
+        if(animstatus ===false){
+          animstatus = true
+        } else {
+          animstatus = false
+        }
+        console.log(animstatus)
     }
 
     p.draw = () => {
@@ -68,14 +84,16 @@ const Graph = () => {
       let by, cy, dy, ey, fy;
 
       //speed contro
-      if (yfactor > 0.00000006) {
-        yfactor = yfactor - 0.000000003;
-      }
+      // if (yfactor > 0.00000006) {
+      //   yfactor = yfactor - 0.000000002;
+      // }
 
-      if (bar < xstep * (data.getRowCount() - 1)) {
-        bar = bar + xstep;
-      }
+if(animstatus === true){
 
+  animateGraph()
+} else {
+  yfactor = 0.00000025
+}
       let gap = 5;
 
       let arcA1, arcA2;
@@ -83,7 +101,15 @@ const Graph = () => {
       // asia
       p.background(p.color("#EBEBEB"));
       //   bar = 100;
+      p.noStroke();
+      p.fill(colorAlpha("#696969", 0.1))
+      p.textSize(200);
+      p.text(data.getColumn("Year")[Math.floor(bar / xstep)], 40, 200);
 
+
+      p.translate(width/2-bar, 0)
+
+      
       p.beginShape();
       for (let i = data.getRowCount() - 1; i >= 1; i--) {
         ax = i * xstep;
@@ -209,6 +235,7 @@ const Graph = () => {
       // cursor
       p.stroke(p.color("#696969"));
       p.line(bar, 50, bar, height);
+
       p.noStroke();
       p.fill(p.color("#ebebeb"));
       p.rect(bar, 0, width, height);
@@ -306,6 +333,9 @@ const Graph = () => {
         p.radians(270),
         p.radians(90)
       );
+
+
+
     };
   };
 
