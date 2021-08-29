@@ -60,7 +60,7 @@ const ColorSketch5 = () => {
       }
 
       drawStuff() {
-        p.pushMatrix();
+        p.push();
         p.translate(this.x, this.y);
         for (let i = 0; i < num; i++) {
           var angle = p.random(p.random(this.a1, this.a1 * 2), this.a2); // take an angle
@@ -71,7 +71,7 @@ const ColorSketch5 = () => {
           if (c > 0.9) p.stroke(p.color("blue"), 30);
           p.point(px, py);
         }
-        p.popMatrix();
+        p.pop();
       }
       // Circle(_x, _y) {
       //   x = _x;

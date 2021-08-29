@@ -185,7 +185,7 @@ const TimelineView = (props) => {
       //   let noisiness = maxNoise * noiseProg(i / n);
       //   blob(size, width / 4, -height / 3, k, t - i * step, noisiness);
       // }
-      setNoise();
+      // setNoise();
     };
 
     function blob(size, xCenter, yCenter, k, t, noisiness) {
@@ -306,12 +306,11 @@ const TimelineView = (props) => {
                 return (
                   <DayItem key={index}>
                     <p style={{ fontSize: "30px" }}>
-                      <br />
-                      {/* {date.toString().substring(8, 10) === "01" ||
-                      date.toString().substring(0, 10) === profile.birthday ||
-                      date.toString().substring(0, 10) === todayDate
-                        ? date.toString().substring(8, 10)
-                        : ""} */}
+                      {date.toString().substring(8, 10) === "01" ||
+                      date.toString().substring(0, 10) === profile.birthday
+                        ? date.toString().substring(0, 7)
+                        : ""}
+                      <br /> <br />
                       {date.toString().substring(8, 10)}
                     </p>
                   </DayItem>
@@ -532,7 +531,7 @@ const TimelineWrapper = styled.div`
 const TimelineTitle = styled.div`
   width: 94vw;
   height: 20vh;
-  position: absolute;
+  position: fixed;
   left: 3vw;
   top: 2vw;
   color: white;
@@ -577,9 +576,8 @@ const DayItem = styled.div`
     width: fit-content;
     position: absolute;
     // border-left: 1px solid white;
-    margin-top: 5vh;
+    // margin-top: 5vh;
     font-size: 12px;
-    background: green;
   }
 `;
 const DaysWrapperScroll = styled.div`

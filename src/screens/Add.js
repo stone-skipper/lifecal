@@ -9,13 +9,12 @@ import Graph from "../components/Graph";
 import Graph2 from "../components/Graph2";
 import Graph3 from "../components/Graph3";
 
-
 const Add = () => {
   return (
     <div>
       {/* <ColorSketch /> */}
-      {/* <ColorSketch3 /> */}
-      <Graph3/>
+      <ColorSketch5 />
+      {/* <Graph3/> */}
       {/* <ColorSketch2></ColorSketch2> */}
     </div>
   );
