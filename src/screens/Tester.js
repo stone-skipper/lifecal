@@ -5,12 +5,9 @@ import Basic from "../components/Basic";
 import NavBottom from "../components/NavBottom";
 import { motion } from "framer-motion";
 import { DateTime } from "luxon";
-import * as p5 from "p5";
 import store from "../store";
 import { Link } from "react-router-dom";
 import ReactSlider from "react-slider";
-
-import noise from "../media/noise.png";
 
 var now = DateTime.now();
 var todayDate = now.toString().substring(0, 10);
@@ -27,10 +24,10 @@ var start,
   diffInYears,
   diffInYearsNum;
 
-const TimelineView = (props) => {
+const Tester = (props) => {
   const [profile, setProfile] = React.useState({
-    name: "",
-    birthday: "2020-01-01",
+    name: "test",
+    birthday: "1999-12-12",
     color1: "#333333",
     color2: "#ffffff",
   });
@@ -46,8 +43,10 @@ const TimelineView = (props) => {
   React.useEffect(() => {
     store.subscribe(function () {
       setProfile({
-        name: store.getState().name,
-        birthday: store.getState().birthday,
+        // name: store.getState().name,
+        // birthday: store.getState().birthday,
+        name: "test",
+        birthday: "1999-10-12",
         color1: store.getState().color1,
         color2: store.getState().color2,
       });
@@ -106,137 +105,6 @@ const TimelineView = (props) => {
 
   const timelineRef = React.useRef(null);
   const [profileReady, setProfileReady] = React.useState(false);
-  // const timelineSketch = (p) => {
-  //   let kMax;
-  //   let step;
-  //   let n = 1; // number of blobs
-  //   let radius = 50; // diameter of the circle
-  //   let inter = 12; // difference between the sizes of two blobs
-  //   let maxNoise = 700;
-  //   let lapse = 0; // timer
-  //   let noiseProg = (x) => x;
-  //   let c1, c2;
-  //   // let r, b, g;
-  //   let img, blurShader;
-  //   let blurry = 0;
-  //   let blurch = 1;
-
-  //   p.setup = () => {
-  //     p.createCanvas(width, height);
-  //     // blurShader = p.createShader(blurVert, blurFrag);
-  //     // p.shader(blurShader);
-  //     p.pixelDensity(1.5);
-  //     // p.colorMode(p.HSB, 1);
-  //     p.colorMode(p.RGB);
-  //     // p.colorMode(p.HSB, 360, 100, 100, 100);
-
-  //     c1 = p.color(profile.color1);
-  //     c2 = p.color(profile.color2);
-  //     p.angleMode(p.DEGREES);
-  //     p.noFill();
-  //     kMax = p.random(0.6, 1.0);
-  //     step = 0.01;
-
-  //     // img = p.createGraphics(width, height);
-  //     // img.circle(width / 2, height / 2, width / 4);
-
-  //     // var t = p.millis();
-  //     // p.shader(blurShader);
-  //     // blurShader.setUniform("tex0", img);
-  //     // blurShader.setUniform("texelSize", [1 / width, 1 / height]);
-  //     // p.rect(0, 0, width, height);
-
-  //     // var t = p.millis();
-  //     // img.filter(p.BLUR, 4);
-  //     // p.image(img, -width / 2, -height / 2);
-
-  //     p.noStroke();
-  //     p.frameRate(30);
-  //   };
-
-  //   p.draw = () => {
-  //     p.blendMode(p.BLEND);
-  //     p.background(0, 0, 0);
-  //     p.blendMode(p.SCREEN);
-
-  //     p.fill(0, 0, 0);
-  //     p.noStroke();
-
-  //     p.drawingContext.shadowColor = c1;
-  //     p.drawingContext.shadowBlur = 2000;
-
-  //     // p.ellipse(300, 260, 700);
-  //     // p.ellipse(600, 4300, 750);
-  //     let t = p.frameCount / 100;
-  //     blob(200, 750, 580, kMax * p.sqrt(1 / 20), t * 10 * step, maxNoise);
-  //     // p.ellipse(750, 580, 600);
-
-  //     p.drawingContext.shadowColor = c2;
-  //     // p.ellipse(480, 190, 900);
-  //     // p.ellipse(330, 480, 1000);
-  //     // p.ellipse(580, 580, 500);
-
-  //     // blurry += blurch;
-  //     // if (blurry > 300 || blurry < 0) blurch *= -1;
-  //     // p.background(p.color("black"));
-  //     // let t = p.frameCount / 100;
-  //     // for (let i = n; i > 0; i--) {
-  //     //   let alpha = 1 - noiseProg(i / n);
-  //     //   // p.fill((alpha / 5 + 0.5) % 1, 1, 1, alpha);
-
-  //     //   p.fill(p.red(c1), p.green(c1), p.blue(c1), alpha);
-  //     //   let size = radius + i * inter;
-  //     //   let k = kMax * p.sqrt(i / n);
-  //     //   let noisiness = maxNoise * noiseProg(i / n);
-  //     //   blob(size, width / 4, -height / 3, k, t - i * step, noisiness);
-  //     // }
-  //     // setNoise();
-  //   };
-
-  //   function blob(size, xCenter, yCenter, k, t, noisiness) {
-  //     p.beginShape();
-  //     let angleStep = 360 / 10;
-  //     for (let theta = 0; theta <= 360 + 2 * angleStep; theta += angleStep) {
-  //       let r1, r2;
-  //       r1 = p.cos(theta) + 1;
-  //       r2 = p.sin(theta) + 1;
-  //       let r = size + p.noise(k * r1, k * r2, t) * noisiness;
-  //       let x = xCenter + r * p.cos(theta);
-  //       let y = yCenter + r * p.sin(theta);
-  //       p.curveVertex(x, y);
-  //     }
-  //     p.endShape();
-  //   }
-
-  //   function setNoise() {
-  //     p.loadPixels();
-  //     for (let x = 0; x < width; x++) {
-  //       for (let y = 0; y < height * 3; y++) {
-  //         if (p.random(1) > 0.5) {
-  //           const index = (x + y * width) * 4;
-  //           p.pixels[index] = 0;
-  //           p.pixels[index + 1] = 0;
-  //           p.pixels[index + 2] = 0;
-  //           p.pixels[index + 3] = 0;
-  //         }
-  //       }
-  //     }
-  //     p.updatePixels();
-  //   }
-  // };
-
-  // React.useEffect(() => {
-  //   let timelinep5;
-  //   if (profileReady === true) {
-  //     timelinep5 = new p5(timelineSketch, timelineRef.current);
-  //   }
-
-  //   return () => {
-  //     if (profileReady === true) {
-  //       timelinep5.remove();
-  //     }
-  //   };
-  // }, [profileReady]);
 
   React.useEffect(() => {
     if (timelineScale === "years") {
@@ -543,14 +411,14 @@ const TimelineView = (props) => {
           }
         }
       >
-        <Profile></Profile>
+        {/* <Profile></Profile> */}
       </motion.div>
       <Basic />
     </TimelineWrapper>
   );
 };
 
-export default TimelineView;
+export default Tester;
 
 const TimelineWrapper = styled.div`
   width: auto;
@@ -622,7 +490,8 @@ const DayItem = styled.div`
   border-radius: 1px;
   font-size: 8px;
   p {
-    width: fit-content;
+    width: 1em;
+    height: 50vh;
     position: absolute;
     // border-left: 1px solid white;
     margin-top: -5vh;

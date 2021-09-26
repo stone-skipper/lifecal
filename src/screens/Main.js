@@ -157,21 +157,6 @@ const Main = () => {
             →→Create yours→→
           </Link>
         </StartBtn>
-        {/* <StartBtn>
-          <Link
-            to={"/timeline"}
-            style={{
-              display: "block",
-              textDecoration: "none",
-              color: "white",
-              width: "fit-content",
-
-              padding: "20px",
-            }}
-          >
-            →→I already have one→→
-          </Link>
-        </StartBtn> */}
       </Content>
     </MainWrapper>
   );
@@ -180,9 +165,17 @@ const Main = () => {
 export default Main;
 const MainWrapper = styled.div`
   width: fit-content;
-  height: 100vh;
-  overflow-x: scroll;
+  height: 98vh;
+  padding: 0;
+  // overflow-x: scroll;
+  overflow-y: hidden;
   position: absolute;
+  top: 0;
+  left: 0;
+
+  &::webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const BG = styled.div`

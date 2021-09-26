@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import { Main, Timeline, Add, TimelineView, Test } from "./screens";
+import { Main, Timeline, Add, TimelineView, Tester } from "./screens";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 
 ReactDOM.render(
@@ -12,7 +12,7 @@ ReactDOM.render(
     <Route path="/timeline" component={Timeline}></Route>
     <Route path="/add" component={Add}></Route>
     <Route path="/timelineView" component={TimelineView}></Route>
-    <Route path="/test" component={Test}></Route>
+    <Route path="/tester" component={Tester}></Route>
   </Router>,
   document.getElementById("root")
 );
