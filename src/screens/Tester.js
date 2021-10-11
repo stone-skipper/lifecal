@@ -8,6 +8,10 @@ import { DateTime } from "luxon";
 import store from "../store";
 import { Link } from "react-router-dom";
 import ReactSlider from "react-slider";
+import ReactDOM from "react-dom";
+// import { Grid } from "react-virtualized";
+import { FixedSizeGrid as Grid } from "react-window";
+// import styles from "./timeline.module.scss";
 
 var now = DateTime.now();
 var todayDate = now.toString().substring(0, 10);
@@ -106,6 +110,50 @@ const Tester = (props) => {
   const timelineRef = React.useRef(null);
   const [profileReady, setProfileReady] = React.useState(false);
 
+  const gridRef = React.createRef();
+  const Cell = ({ columnIndex, rowIndex, style }) => (
+    <div style={style}>
+      {/* heading */}
+      {timelineScale === "days" ? (
+        <p style={{ fontSize: "10px" }}>
+          {dayArray[columnIndex].toString().substring(8, 10) === "01" ||
+          dayArray[columnIndex].toString().substring(0, 10) === profile.birthday
+            ? dayArray[columnIndex].toString().substring(0, 7)
+            : ""}
+        </p>
+      ) : null}
+      {/* big letter */}
+      <motion.p
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        style={{
+          background: "blue",
+          fontSize: (dayFontSize * 2) / 3 + "px",
+          margin: 0,
+        }}
+      >
+        {timelineScale === "days"
+          ? " " + dayArray[columnIndex].toString().substring(8, 10) + " "
+          : null}
+        {timelineScale === "months" &&
+        (dayArray[columnIndex].toString().substring(8, 10) === "01" ||
+          dayArray[columnIndex].toString().substring(0, 10) ===
+            profile.birthday ||
+          dayArray[columnIndex].toString().substring(0, 10) === todayDate)
+          ? dayArray[columnIndex].toString().substring(0, 8)
+          : null}
+        {timelineScale === "years" &&
+        (dayArray[columnIndex].toString().substring(0, 10) ===
+          profile.birthday ||
+          dayArray[columnIndex].toString().substring(5, 10) === "01-01" ||
+          dayArray[columnIndex].toString().substring(0, 10) === todayDate)
+          ? dayArray[columnIndex].toString().substring(0, 4)
+          : null}
+      </motion.p>
+    </div>
+  );
+
   React.useEffect(() => {
     if (timelineScale === "years") {
       setTimelineWidth(width * 0.89);
@@ -124,7 +172,6 @@ const Tester = (props) => {
           zIndex: -100,
           width: "100vw",
           height: "calc(100vh - 5vw)",
-          //   backgroundImage: `url(${noise})`,
           backgroundSize: "cover",
           backgroundPosition: "100% 0%",
         }}
@@ -174,6 +221,7 @@ const Tester = (props) => {
               className="horizontal-slider"
               thumbClassName="thumb"
               trackClassName="track"
+              min={1}
               renderThumb={(props, state) => (
                 <div {...props}>{state.valueNow}</div>
               )}
@@ -194,6 +242,23 @@ const Tester = (props) => {
         </motion.div>
         <DaysWrapperScroll>
           <DaysWrapper timelineScale={timelineScale}>
+            {dayArray.length !== 0 ? (
+              <Grid
+                ref={gridRef}
+                columnCount={dayArray.length}
+                rowCount={1}
+                columnWidth={
+                  timelineScale === "days" ? dayFontSize + 10 : dayFontSize / 10
+                }
+                rowHeight={80}
+                height={200}
+                width={1400}
+              >
+                {Cell}
+              </Grid>
+            ) : null}
+          </DaysWrapper>
+          {/* <DaysWrapper timelineScale={timelineScale}>
             {dayArray.map((date, index) => {
               if (timelineScale === "days") {
                 return (
@@ -229,40 +294,19 @@ const Tester = (props) => {
                     key={index}
                     // timelineScale={date.toString().substring(5,10)==="01-01"||date.toString().substring(0,10)===birthday?"block":"none"}
                   >
-                    {/* <motion.div
-                    style={{
-                      width: 2,
-                      height: 2,
-                      borderRadius: 1,
-                      background: "white",
-                      opacity: 0,
-                    }}
-                    animate={{
-                      opacity: 1,
-                      transition: {
-                        duration: 0.5,
-                        delay: 0.1 * index,
-                      },
-                    }}
-                  > */}
                     <p>
                       <br />
-                      {/* {date.toString().substring(5, 10) === "01-01" ||
-                      date.toString().substring(0, 10) === profile.birthday ||
-                      date.toString().substring(0, 10) === todayDate
-                        ? date.toString().substring(0, 4)
-                        : ""} */}
+
                       {date.toString().substring(0, 10) === profile.birthday ||
                       date.toString().substring(0, 10) === todayDate
                         ? date.toString().substring(0, 4)
                         : ""}
                     </p>
-                    {/* </motion.div> */}
                   </DayItem>
                 );
               }
             })}
-          </DaysWrapper>
+          </DaysWrapper> */}
           <EventWrapper timelineScale={timelineScale}>
             {eventArray.map((date, index) => {
               if (eventArray.length !== 0) {
@@ -383,8 +427,14 @@ const Tester = (props) => {
         <MarkEvent
           style={{ opacity: mMilestone ? 0.3 : 1 }}
           onClick={() => {
-            setMEvent(!mEvent);
-            console.log(mEvent);
+            // setMEvent(!mEvent);
+            // console.log(mEvent);
+            gridRef.current.scrollToItem({
+              align: "smart",
+              columnIndex: 300,
+              rowIndex: 0,
+            });
+            console.log(gridRef.current);
           }}
         >
           +
@@ -392,7 +442,7 @@ const Tester = (props) => {
         <MarkMilestone
           style={{ opacity: mEvent ? 0.3 : 1 }}
           onClick={() => {
-            setMMilestone(!mMilestone);
+            // setMMilestone(!mMilestone);
           }}
         >
           +
@@ -493,10 +543,10 @@ const DayItem = styled.div`
     width: 1em;
     height: 50vh;
     position: absolute;
-    // border-left: 1px solid white;
+    border-left: 1px solid white;
     margin-top: -5vh;
     font-size: 12px;
-    background: blue;
+    // background: blue;
   }
 `;
 const DaysWrapperScroll = styled.div`
@@ -524,6 +574,7 @@ const DaysWrapper = styled.div`
   position: absolute;
   top: 50vh;
   justify-content: space-between;
+  z-index: 1000;
 `;
 
 const TimelineCanvas = styled.div`
