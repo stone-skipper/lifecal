@@ -38,6 +38,7 @@ const Tester = (props) => {
 
   const [dayArray, setDayArray] = React.useState([]);
   const [eventArray, setEventArray] = React.useState([]);
+  const [eventIndexedArray, setEventIndexdArray] = React.useState([]);
   const [milestoneArray, setMilestoneArray] = React.useState([]);
   const [mEvent, setMEvent] = React.useState(false);
   const [mMilestone, setMMilestone] = React.useState(false);
@@ -99,58 +100,100 @@ const Tester = (props) => {
     }
   }, [profile.name]);
 
+  const eventIndexChecker = (day, event) => {
+    var eventIndexed = new Array(day.length);
+    for (var i = 0; i < event.length; i++) {
+      let index = -parseInt(start.diff(event[i].date, "days").toObject().days);
+      event[i].dayIndex = index;
+      eventIndexed[index] = { title: event[i].title, date: event[i].date };
+    }
+    setEventIndexdArray(eventIndexed);
+  };
+  React.useEffect(() => {
+    if (dayArray.length > 1) {
+      eventIndexChecker(dayArray, eventArray);
+    }
+  }, [eventArray]);
+
   const [timelineScale, setTimelineScale] = React.useState("days");
   const [timelineWidth, setTimelineWidth] = React.useState(
     3 * diffInDaysNum + width * 0.08
   );
   const [dayFontGap, setDayFontGap] = React.useState(90);
-  const [dayFontSize, setDayFontSize] = React.useState(60);
+  const [dayFontSize, setDayFontSize] = React.useState(90);
   React.useEffect(() => {}, [timelineScale]);
 
   const timelineRef = React.useRef(null);
   const [profileReady, setProfileReady] = React.useState(false);
 
   const gridRef = React.createRef();
+
   const Cell = ({ columnIndex, rowIndex, style }) => (
     <div style={style}>
       {/* heading */}
       {timelineScale === "days" ? (
-        <p style={{ fontSize: "10px" }}>
-          {dayArray[columnIndex].toString().substring(8, 10) === "01" ||
-          dayArray[columnIndex].toString().substring(0, 10) === profile.birthday
-            ? dayArray[columnIndex].toString().substring(0, 7)
-            : ""}
-        </p>
+        <>
+          <p style={{ fontSize: "10px" }}>
+            {dayArray[columnIndex].toString().substring(8, 10) === "01" ||
+            dayArray[columnIndex].toString().substring(0, 10) ===
+              profile.birthday
+              ? dayArray[columnIndex].toString().substring(0, 7)
+              : null}
+          </p>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            style={{
+              background: "blue",
+              fontSize: (dayFontSize * 2) / 3 + "px",
+              margin: 0,
+            }}
+          >
+            {dayArray[columnIndex].toString().substring(8, 10)}
+          </motion.p>
+        </>
       ) : null}
-      {/* big letter */}
-      <motion.p
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        style={{
-          background: "blue",
-          fontSize: (dayFontSize * 2) / 3 + "px",
-          margin: 0,
-        }}
-      >
-        {timelineScale === "days"
-          ? " " + dayArray[columnIndex].toString().substring(8, 10) + " "
-          : null}
-        {timelineScale === "months" &&
-        (dayArray[columnIndex].toString().substring(8, 10) === "01" ||
-          dayArray[columnIndex].toString().substring(0, 10) ===
-            profile.birthday ||
-          dayArray[columnIndex].toString().substring(0, 10) === todayDate)
-          ? dayArray[columnIndex].toString().substring(0, 8)
-          : null}
-        {timelineScale === "years" &&
-        (dayArray[columnIndex].toString().substring(0, 10) ===
+      {timelineScale === "months" &&
+      (dayArray[columnIndex].toString().substring(8, 10) === "01" ||
+        dayArray[columnIndex].toString().substring(0, 10) ===
           profile.birthday ||
-          dayArray[columnIndex].toString().substring(5, 10) === "01-01" ||
-          dayArray[columnIndex].toString().substring(0, 10) === todayDate)
-          ? dayArray[columnIndex].toString().substring(0, 4)
-          : null}
-      </motion.p>
+        dayArray[columnIndex].toString().substring(0, 10) === todayDate) ? (
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          style={{
+            background: "blue",
+            fontSize: (dayFontSize * 2) / 3 + "px",
+            margin: 0,
+          }}
+        >
+          {dayArray[columnIndex].toString().substring(0, 8)}
+        </motion.p>
+      ) : null}
+
+      {timelineScale === "years" &&
+      (dayArray[columnIndex].toString().substring(0, 10) === profile.birthday ||
+        dayArray[columnIndex].toString().substring(5, 10) === "01-01" ||
+        dayArray[columnIndex].toString().substring(0, 10) === todayDate) ? (
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          style={{
+            background: "blue",
+            fontSize: (dayFontSize * 2) / 3 + 10 + "px",
+            margin: 0,
+          }}
+        >
+          {dayArray[columnIndex].toString().substring(0, 4)}
+        </motion.p>
+      ) : null}
+
+      {eventIndexedArray[columnIndex] !== undefined
+        ? eventIndexedArray[columnIndex].title
+        : null}
     </div>
   );
 
@@ -228,7 +271,7 @@ const Tester = (props) => {
               defaultValue={100}
               onChange={(state) => {
                 // console.log(state);
-                setDayFontSize((60 * state) / 100);
+                setDayFontSize((90 * state) / 100);
                 if (state > 70) {
                   setTimelineScale("days");
                 } else if (state <= 70 && state > 40) {
@@ -258,55 +301,7 @@ const Tester = (props) => {
               </Grid>
             ) : null}
           </DaysWrapper>
-          {/* <DaysWrapper timelineScale={timelineScale}>
-            {dayArray.map((date, index) => {
-              if (timelineScale === "days") {
-                return (
-                  <DayItem key={index}>
-                    <p style={{ fontSize: "20px", marginTop: "-90px" }}>
-                      {date.toString().substring(8, 10) === "01" ||
-                      date.toString().substring(0, 10) === profile.birthday
-                        ? date.toString().substring(0, 7)
-                        : ""}
-                    </p>
-                    <p style={{ fontSize: dayFontSize + "px" }}>
-                      {date.toString().substring(8, 10)}
-                    </p>
-                  </DayItem>
-                );
-              } else if (timelineScale === "months") {
-                return (
-                  <DayItem
-                    key={index}
-                    // timelineScale={date.toString().substring(5,10)==="01-01"||date.toString().substring(0,10)===birthday?"block":"none"}
-                  >
-                    <br />
-                    {date.toString().substring(8, 10) === "01" ||
-                    date.toString().substring(0, 10) === profile.birthday ||
-                    date.toString().substring(0, 10) === todayDate
-                      ? date.toString().substring(0, 8)
-                      : ""}
-                  </DayItem>
-                );
-              } else if (timelineScale === "years") {
-                return (
-                  <DayItem
-                    key={index}
-                    // timelineScale={date.toString().substring(5,10)==="01-01"||date.toString().substring(0,10)===birthday?"block":"none"}
-                  >
-                    <p>
-                      <br />
-
-                      {date.toString().substring(0, 10) === profile.birthday ||
-                      date.toString().substring(0, 10) === todayDate
-                        ? date.toString().substring(0, 4)
-                        : ""}
-                    </p>
-                  </DayItem>
-                );
-              }
-            })}
-          </DaysWrapper> */}
+          {/* 
           <EventWrapper timelineScale={timelineScale}>
             {eventArray.map((date, index) => {
               if (eventArray.length !== 0) {
@@ -367,7 +362,7 @@ const Tester = (props) => {
                 );
               }
             })}
-          </EventWrapper>
+          </EventWrapper> */}
         </DaysWrapperScroll>
       </motion.div>
       <MarkEventLayout
@@ -551,20 +546,11 @@ const DayItem = styled.div`
 `;
 const DaysWrapperScroll = styled.div`
   width: 100vw;
-  padding-top: 55vh;
+  padding-top: 45vh;
   position: relative;
 `;
 const DaysWrapper = styled.div`
-  width: ${(props) => {
-    if (props.timelineScale === "days") {
-      return "calc(90px * " + diffInDaysNum + " + 8vw)";
-    } else if (props.timelineScale === "months") {
-      return "900vw";
-    } else if (props.timelineScale === "years") {
-      return "89vw";
-    }
-  }};
-  border-top: 1px solid white;
+  // border-top: 1px solid white;
   height: 20vh;
   //   background: red;
   //   overflow-x: scroll;
@@ -572,9 +558,10 @@ const DaysWrapper = styled.div`
   margin-right: 8vw;
   display: flex;
   position: absolute;
-  top: 50vh;
+  top: 40vh;
   justify-content: space-between;
   z-index: 1000;
+  width: 92vw;
 `;
 
 const TimelineCanvas = styled.div`
@@ -630,16 +617,6 @@ const BtnWrapper = styled.div`
 `;
 
 const EventWrapper = styled.div`
-  width: ${(props) => {
-    if (props.timelineScale === "days") {
-      return "calc(90px * " + diffInDaysNum + " + 8vw)";
-    } else if (props.timelineScale === "months") {
-      return "900vw";
-    } else if (props.timelineScale === "years") {
-      return "89vw";
-    }
-  }};
-
   height: 20vh;
   //   margin-right: 8vw;
 

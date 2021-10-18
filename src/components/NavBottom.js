@@ -8,18 +8,20 @@ const NavBottom = (props) => {
   return (
     <NavWrapper>
       <h2>
-        {daysNum.toString()}
-        {daysNum.toString().slice(-1) === "1" ? "st" : ""}
-        {daysNum.toString().slice(-1) === "2" ? "nd" : ""}
-        {daysNum.toString().slice(-1) === "3" ? "rd" : ""}
-        {daysNum.toString().slice(-1) !== "1" &&
-        daysNum.toString().slice(-1) !== "2" &&
-        daysNum.toString().slice(-1) !== "3"
-          ? "th"
-          : ""}{" "}
+        {daysNum.toLocaleString()}
+        <span>
+          {" "}
+          {daysNum.toString().slice(-1) === "1" ? "st" : ""}
+          {daysNum.toString().slice(-1) === "2" ? "nd" : ""}
+          {daysNum.toString().slice(-1) === "3" ? "rd" : ""}
+          {daysNum.toString().slice(-1) !== "1" &&
+          daysNum.toString().slice(-1) !== "2" &&
+          daysNum.toString().slice(-1) !== "3"
+            ? "th"
+            : ""}{" "}
+        </span>
         day
-        {/* <br /> */}
-        <span> in your life</span>
+        {/* <span> in your life</span> */}
       </h2>
     </NavWrapper>
   );
@@ -51,5 +53,8 @@ const NavWrapper = styled.div`
   }
   span {
     font-size: 10px;
+    height: 0;
+    margin-bottom: 1em;
+    background: red;
   }
 `;
