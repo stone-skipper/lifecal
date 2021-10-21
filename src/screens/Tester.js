@@ -9,7 +9,6 @@ import store from "../store";
 import { Link } from "react-router-dom";
 import ReactSlider from "react-slider";
 import ReactDOM from "react-dom";
-// import { Grid } from "react-virtualized";
 import { FixedSizeGrid as Grid } from "react-window";
 // import styles from "./timeline.module.scss";
 
@@ -128,6 +127,29 @@ const Tester = (props) => {
 
   const gridRef = React.createRef();
 
+  const DayItem = ({ children }) => {
+    return (
+      <motion.p
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        style={{
+          // background: "blue",
+          fontSize: (dayFontSize * 2) / 3 + 10 + "px",
+          margin: 0,
+        }}
+      >
+        {children}
+      </motion.p>
+    );
+  };
+
+  const MonthTranslator = (numDate) => {
+    var monthFirst =
+      numDate.toLocal().monthShort + " " + numDate.toLocal().year;
+    return monthFirst;
+  };
+
   const Cell = ({ columnIndex, rowIndex, style }) => (
     <div style={style}>
       {/* heading */}
@@ -140,18 +162,18 @@ const Tester = (props) => {
               ? dayArray[columnIndex].toString().substring(0, 7)
               : null}
           </p>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
+          <div
             style={{
-              background: "blue",
-              fontSize: (dayFontSize * 2) / 3 + "px",
-              margin: 0,
+              width:
+                parseInt(dayArray[columnIndex].toString().substring(8, 10)) +
+                "px",
+              height:
+                parseInt(dayArray[columnIndex].toString().substring(8, 10)) +
+                "px",
+              background: "white",
             }}
-          >
-            {dayArray[columnIndex].toString().substring(8, 10)}
-          </motion.p>
+          ></div>
+          <DayItem>{dayArray[columnIndex].toString().substring(8, 10)}</DayItem>
         </>
       ) : null}
       {timelineScale === "months" &&
@@ -159,36 +181,28 @@ const Tester = (props) => {
         dayArray[columnIndex].toString().substring(0, 10) ===
           profile.birthday ||
         dayArray[columnIndex].toString().substring(0, 10) === todayDate) ? (
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          style={{
-            background: "blue",
-            fontSize: (dayFontSize * 2) / 3 + "px",
-            margin: 0,
-          }}
-        >
-          {dayArray[columnIndex].toString().substring(0, 8)}
-        </motion.p>
+        <DayItem>
+          {/* {dayArray[columnIndex].toString().substring(0, 7)} */}
+          {MonthTranslator(dayArray[columnIndex])}
+        </DayItem>
       ) : null}
 
       {timelineScale === "years" &&
       (dayArray[columnIndex].toString().substring(0, 10) === profile.birthday ||
         dayArray[columnIndex].toString().substring(5, 10) === "01-01" ||
         dayArray[columnIndex].toString().substring(0, 10) === todayDate) ? (
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          style={{
-            background: "blue",
-            fontSize: (dayFontSize * 2) / 3 + 10 + "px",
-            margin: 0,
-          }}
-        >
-          {dayArray[columnIndex].toString().substring(0, 4)}
-        </motion.p>
+        // <motion.p
+        //   initial={{ opacity: 0, y: 20 }}
+        //   animate={{ opacity: 1, y: 0 }}
+        //   transition={{ duration: 0.5 }}
+        //   style={{
+        //     background: "blue",
+        //     fontSize: (dayFontSize * 2) / 3 + 10 + "px",
+        //     margin: 0,
+        //   }}
+        // >
+        // </motion.p>
+        <DayItem> {dayArray[columnIndex].toString().substring(0, 4)}</DayItem>
       ) : null}
 
       {eventIndexedArray[columnIndex] !== undefined
@@ -291,78 +305,19 @@ const Tester = (props) => {
                 columnCount={dayArray.length}
                 rowCount={1}
                 columnWidth={
-                  timelineScale === "days" ? dayFontSize + 10 : dayFontSize / 10
+                  timelineScale === "days" ? dayFontSize + 20 : dayFontSize / 10
                 }
                 rowHeight={80}
                 height={200}
                 width={1400}
+                onScroll={(info) => {
+                  console.log(info);
+                }}
               >
                 {Cell}
               </Grid>
             ) : null}
           </DaysWrapper>
-          {/* 
-          <EventWrapper timelineScale={timelineScale}>
-            {eventArray.map((date, index) => {
-              if (eventArray.length !== 0) {
-                return (
-                  <EventItem
-                    sorter={
-                      index === 0 || index === eventArray.length - 1
-                        ? "star"
-                        : "line"
-                    }
-                    key={index}
-                    style={{
-                      textAlign:
-                        index === eventArray.length - 1 ? "right" : "left",
-                      position: "absolute",
-                      top: 0,
-                      left:
-                        (timelineWidth *
-                          DateTime.fromISO(date.date)
-                            .diff(start, "days")
-                            .toObject().days) /
-                        diffInDaysNum,
-                    }}
-                  >
-                    <motion.div
-                      style={{
-                        // marginTop:
-                        //   index === 0 || index === eventArray.length - 1
-                        //     ? 20
-                        //     : 0,
-                        width:
-                          index === 0 || index === eventArray.length - 1
-                            ? "fit-content"
-                            : 50,
-                        height:
-                          index === 0 || index === eventArray.length - 1
-                            ? 10
-                            : 1,
-                        background:
-                          index === 0 || index === eventArray.length - 1
-                            ? "white"
-                            : "transparent",
-                        borderBottom:
-                          index === 0 || index === eventArray.length - 1
-                            ? "none"
-                            : "1px solid white",
-                        rotate:
-                          index === 0 || index === eventArray.length - 1
-                            ? 45
-                            : 0,
-                      }}
-                    ></motion.div>
-                    <p>{date.title}</p>
-                    <p>
-                      <span>test date</span>
-                    </p>
-                  </EventItem>
-                );
-              }
-            })}
-          </EventWrapper> */}
         </DaysWrapperScroll>
       </motion.div>
       <MarkEventLayout
@@ -490,15 +445,21 @@ const TimelineTitle = styled.div`
     width: 30vw;
   }
   .thumb {
+    cursor: pointer;
+    position: absolute;
+    z-index: 100;
     background: black;
-    font-size: 15px;
-    margin-top: 10px;
+    border: 5px solid #3774ff;
+    display: block;
+    margin-top: -15px;
+    padding: 4px;
+  }
+  .thumb.active {
+    background-color: grey;
   }
   .track {
     background: white;
     height: 3px;
-    justify-content: center;
-    align-content: center;
   }
 
   h1 {
@@ -529,21 +490,7 @@ const TimelineScaleBtn = styled.div`
     background: rgba(255, 255, 255, 0.1);
   }
 `;
-const DayItem = styled.div`
-  width: 2px;
-  height: 2px;
-  border-radius: 1px;
-  font-size: 8px;
-  p {
-    width: 1em;
-    height: 50vh;
-    position: absolute;
-    border-left: 1px solid white;
-    margin-top: -5vh;
-    font-size: 12px;
-    // background: blue;
-  }
-`;
+
 const DaysWrapperScroll = styled.div`
   width: 100vw;
   padding-top: 45vh;
@@ -562,15 +509,6 @@ const DaysWrapper = styled.div`
   justify-content: space-between;
   z-index: 1000;
   width: 92vw;
-`;
-
-const TimelineCanvas = styled.div`
-  width: 100vw;
-  height: 100vh;
-  height: 100vh;
-  position: fixed;
-  overflow: hidden;
-  z-index: -1;
 `;
 
 const MarkEvent = styled.div`
@@ -614,37 +552,6 @@ const BtnWrapper = styled.div`
   left: 46vw;
   bottom: 15vh;
   z-index: 1;
-`;
-
-const EventWrapper = styled.div`
-  height: 20vh;
-  //   margin-right: 8vw;
-
-  position: absolute;
-  top: calc(50vh + 11px);
-  margin-left: calc(3vw - 7px);
-`;
-const EventItem = styled.div`
-  display: ${(props) => (props.sorter === "star" ? "block" : "flex")};
-  transform-origin: ${(props) =>
-    props.sorter === "star" ? "default" : "top left"};
-
-  transform: ${(props) =>
-    props.sorter === "star" ? "rotate(0deg)" : "rotate(-60deg)"};
-  p {
-    width: 200px;
-    height: fit-content;
-    margin-top: ${(props) => (props.sorter === "star" ? "0" : "-5px")};
-    margin-left: ${(props) => (props.sorter === "star" ? "0" : "10px")};
-  }
-  span {
-    opacity: 0;
-  }
-  &:hover {
-    span {
-      opacity: 1;
-    }
-  }
 `;
 
 const MarkEventLayout = styled.div`
