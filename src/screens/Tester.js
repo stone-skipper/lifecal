@@ -10,7 +10,10 @@ import { Link } from "react-router-dom";
 import ReactSlider from "react-slider";
 import ReactDOM from "react-dom";
 import { FixedSizeGrid as Grid } from "react-window";
-// import styles from "./timeline.module.scss";
+import InfiniteLoader from "react-window-infinite-loader";
+
+import styles from "./Tester.module.scss";
+import { Slider } from "@lifarl/react-scroll-snap-slider";
 
 var now = DateTime.now();
 var todayDate = now.toString().substring(0, 10);
@@ -30,7 +33,7 @@ var start,
 const Tester = (props) => {
   const [profile, setProfile] = React.useState({
     name: "test",
-    birthday: "1999-12-12",
+    birthday: "1994-07-08",
     color1: "#333333",
     color2: "#ffffff",
   });
@@ -50,7 +53,7 @@ const Tester = (props) => {
         // name: store.getState().name,
         // birthday: store.getState().birthday,
         name: "test",
-        birthday: "1999-10-12",
+        birthday: "1994-07-08",
         color1: store.getState().color1,
         color2: store.getState().color2,
       });
@@ -92,6 +95,7 @@ const Tester = (props) => {
         { title: "Baltimore", date: DateTime.fromISO("2016-07-02") },
         { title: "start college", date: DateTime.fromISO("2013-03-02") },
         { title: "internship in US", date: DateTime.fromISO("2018-04-16") },
+        { title: "end of student", date: DateTime.fromISO("2019-08-27") },
         { title: "today", date: end },
       ]);
 
@@ -115,15 +119,19 @@ const Tester = (props) => {
   }, [eventArray]);
 
   const [timelineScale, setTimelineScale] = React.useState("days");
-  const [timelineWidth, setTimelineWidth] = React.useState(
-    3 * diffInDaysNum + width * 0.08
-  );
-  const [dayFontGap, setDayFontGap] = React.useState(90);
+  // const [timelineWidth, setTimelineWidth] = React.useState(
+  //   3 * diffInDaysNum + width * 0.08
+  // );
+  // const [dayFontGap, setDayFontGap] = React.useState(90);
   const [dayFontSize, setDayFontSize] = React.useState(90);
   React.useEffect(() => {}, [timelineScale]);
 
   const timelineRef = React.useRef(null);
   const [profileReady, setProfileReady] = React.useState(false);
+
+  const getRandomNum = (min, max) => {
+    return Math.random() * (max - min) + min;
+  };
 
   const gridRef = React.createRef();
 
@@ -132,11 +140,11 @@ const Tester = (props) => {
       <motion.p
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
+        transition={{ duration: 1 }}
         style={{
-          // background: "blue",
           fontSize: (dayFontSize * 2) / 3 + 10 + "px",
           margin: 0,
+          // fontFamily: "'Syne', sans-serif",
         }}
       >
         {children}
@@ -144,6 +152,24 @@ const Tester = (props) => {
     );
   };
 
+  const LOADING = 1;
+  const LOADED = 2;
+  let itemStatusMap = {};
+
+  const isItemLoaded = (index) => !!itemStatusMap[index];
+  const loadMoreItems = (startIndex, stopIndex) => {
+    for (let index = startIndex; index <= stopIndex; index++) {
+      itemStatusMap[index] = LOADING;
+    }
+    return new Promise((resolve) =>
+      setTimeout(() => {
+        for (let index = startIndex; index <= stopIndex; index++) {
+          itemStatusMap[index] = LOADED;
+        }
+        resolve();
+      }, 100)
+    );
+  };
   const MonthTranslator = (numDate) => {
     var monthFirst =
       numDate.toLocal().monthShort + " " + numDate.toLocal().year;
@@ -155,6 +181,20 @@ const Tester = (props) => {
       {/* heading */}
       {timelineScale === "days" ? (
         <>
+          <div
+            style={{
+              width: "1px",
+              height: 100,
+              position: "absolute",
+              // width:
+              //   parseInt(dayArray[columnIndex].toString().substring(8, 10)) +
+              //   "px",
+              // height:
+              //   parseInt(dayArray[columnIndex].toString().substring(8, 10)) +
+              //   "px",
+              background: "white",
+            }}
+          ></div>
           <p style={{ fontSize: "10px" }}>
             {dayArray[columnIndex].toString().substring(8, 10) === "01" ||
             dayArray[columnIndex].toString().substring(0, 10) ===
@@ -162,17 +202,7 @@ const Tester = (props) => {
               ? dayArray[columnIndex].toString().substring(0, 7)
               : null}
           </p>
-          <div
-            style={{
-              width:
-                parseInt(dayArray[columnIndex].toString().substring(8, 10)) +
-                "px",
-              height:
-                parseInt(dayArray[columnIndex].toString().substring(8, 10)) +
-                "px",
-              background: "white",
-            }}
-          ></div>
+
           <DayItem>{dayArray[columnIndex].toString().substring(8, 10)}</DayItem>
         </>
       ) : null}
@@ -181,27 +211,47 @@ const Tester = (props) => {
         dayArray[columnIndex].toString().substring(0, 10) ===
           profile.birthday ||
         dayArray[columnIndex].toString().substring(0, 10) === todayDate) ? (
-        <DayItem>
-          {/* {dayArray[columnIndex].toString().substring(0, 7)} */}
-          {MonthTranslator(dayArray[columnIndex])}
-        </DayItem>
-      ) : null}
+        <>
+          <div
+            style={{
+              width: "1px",
+              height: 100,
+              position: "absolute",
+              // width:
+              //   parseInt(dayArray[columnIndex].toString().substring(8, 10)) +
+              //   "px",
+              // height:
+              //   parseInt(dayArray[columnIndex].toString().substring(8, 10)) +
+              //   "px",
+              background: "white",
+            }}
+          ></div>
+          <DayItem>
+            {/* {dayArray[columnIndex].toString().substring(0, 7)} */}
+            {MonthTranslator(dayArray[columnIndex])}
+          </DayItem>
+        </>
+      ) : (
+        <div
+          style={{
+            width: "1px",
+            height: 100,
+            position: "absolute",
+            // width:
+            //   parseInt(dayArray[columnIndex].toString().substring(8, 10)) +
+            //   "px",
+            // height:
+            //   parseInt(dayArray[columnIndex].toString().substring(8, 10)) +
+            //   "px",
+            background: "white",
+          }}
+        ></div>
+      )}
 
       {timelineScale === "years" &&
       (dayArray[columnIndex].toString().substring(0, 10) === profile.birthday ||
         dayArray[columnIndex].toString().substring(5, 10) === "01-01" ||
         dayArray[columnIndex].toString().substring(0, 10) === todayDate) ? (
-        // <motion.p
-        //   initial={{ opacity: 0, y: 20 }}
-        //   animate={{ opacity: 1, y: 0 }}
-        //   transition={{ duration: 0.5 }}
-        //   style={{
-        //     background: "blue",
-        //     fontSize: (dayFontSize * 2) / 3 + 10 + "px",
-        //     margin: 0,
-        //   }}
-        // >
-        // </motion.p>
         <DayItem> {dayArray[columnIndex].toString().substring(0, 4)}</DayItem>
       ) : null}
 
@@ -211,28 +261,106 @@ const Tester = (props) => {
     </div>
   );
 
-  React.useEffect(() => {
-    if (timelineScale === "years") {
-      setTimelineWidth(width * 0.89);
-    } else if (timelineScale === "months") {
-      setTimelineWidth(width * 9);
-    } else if (timelineScale === "days") {
-      setTimelineWidth(3 * diffInDaysNum + width * 0.08);
-    }
-  }, [timelineScale]);
+  // React.useEffect(() => {
+  //   if (timelineScale === "years") {
+  //     setTimelineWidth(width * 0.89);
+  //   } else if (timelineScale === "months") {
+  //     setTimelineWidth(width * 9);
+  //   } else if (timelineScale === "days") {
+  //     setTimelineWidth(3 * diffInDaysNum + width * 0.08);
+  //   }
+  // }, [timelineScale]);
+  var wHeight = window.innerHeight;
+  var wWidth = window.innerWidth;
+
+  const [rangeStart, setRangeStart] = React.useState();
+  const [rangeEnd, setRangeEnd] = React.useState();
 
   return (
-    <TimelineWrapper>
-      <div
-        style={{
-          position: "fixed",
-          zIndex: -100,
-          width: "100vw",
-          height: "calc(100vh - 5vw)",
-          backgroundSize: "cover",
-          backgroundPosition: "100% 0%",
-        }}
-      ></div>
+    <div className={styles.bodyWrapper}>
+      <div className={styles.topBar}>
+        <motion.p style={{ width: "50%" }}>{profile.name}'s lifelog</motion.p>
+        <motion.p style={{ width: "25%" }}>{diffInDaysNum} days</motion.p>
+        <motion.p style={{ width: "25%" }}>{eventArray.length} marks</motion.p>
+      </div>
+      <div className={styles.bottomBar}>
+        <motion.p>{profile.birthday}</motion.p>
+        <motion.div
+          className={styles.timelineBar}
+          style={{ width: wWidth - 220 }}
+        >
+          <motion.div
+            className={styles.timelineRange}
+            style={{
+              width: rangeEnd - rangeStart,
+              left: ((wWidth - 220) * rangeStart) / dayArray.length,
+            }}
+          ></motion.div>
+          {eventArray.map((item, index) => {
+            return (
+              <motion.div
+                className={styles.timelineEvent}
+                style={{
+                  left: ((wWidth - 220) * item.dayIndex) / dayArray.length,
+                }}
+              ></motion.div>
+            );
+          })}
+        </motion.div>
+        <motion.p>{todayDate}</motion.p>
+      </div>
+      <div className={styles.controlWrapper}>
+        <TimelineScaleBtn
+        // onClick={() => {
+        //   console.log(timelineScale);
+        //   if (timelineScale === "years") {
+        //     setTimelineScale("days");
+        //   } else if (timelineScale === "days") {
+        //     setTimelineScale("months");
+        //   } else if (timelineScale === "months") {
+        //     setTimelineScale("years");
+        //   }
+        // }}
+        >
+          {timelineScale}
+        </TimelineScaleBtn>
+        <ReactSlider
+          className={styles.horizontalSlider}
+          thumbClassName="thumb"
+          trackClassName="track"
+          min={1}
+          renderThumb={(props, state) => (
+            <div
+              {...props}
+              style={{
+                cursor: "pointer",
+                border: "5px solid white",
+                padding: 4,
+                // display: "block",
+                // position: "absolute",
+              }}
+            >
+              {state.valueNow}
+            </div>
+          )}
+          renderTrack={(props, state) => (
+            <div {...props} style={{ height: 7, width: "30vw" }}></div>
+          )}
+          defaultValue={100}
+          onChange={(state) => {
+            // console.log(state);
+            setDayFontSize((90 * state) / 100);
+            if (state > 50) {
+              setTimelineScale("days");
+            } else if (state <= 50 && state > 20) {
+              setTimelineScale("months");
+            } else {
+              setTimelineScale("years");
+            }
+          }}
+        />
+      </div>
+
       <motion.div
         initial={{ y: 0 }}
         animate={{
@@ -240,11 +368,7 @@ const Tester = (props) => {
         }}
         transition={{ duration: 1 }}
       >
-        {/* <TimelineCanvas
-          ref={timelineRef}
-          timelineScale={timelineScale}
-        ></TimelineCanvas> */}
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: profileReady ? 1 : 0 }}
           transition={{ duration: 1 }}
@@ -286,9 +410,9 @@ const Tester = (props) => {
               onChange={(state) => {
                 // console.log(state);
                 setDayFontSize((90 * state) / 100);
-                if (state > 70) {
+                if (state > 50) {
                   setTimelineScale("days");
-                } else if (state <= 70 && state > 40) {
+                } else if (state <= 50 && state > 20) {
                   setTimelineScale("months");
                 } else {
                   setTimelineScale("years");
@@ -296,31 +420,47 @@ const Tester = (props) => {
               }}
             />
           </TimelineTitle>
-        </motion.div>
+        </motion.div> */}
         <DaysWrapperScroll>
           <DaysWrapper timelineScale={timelineScale}>
             {dayArray.length !== 0 ? (
-              <Grid
-                ref={gridRef}
-                columnCount={dayArray.length}
-                rowCount={1}
-                columnWidth={
-                  timelineScale === "days" ? dayFontSize + 20 : dayFontSize / 10
-                }
-                rowHeight={80}
-                height={200}
-                width={1400}
-                onScroll={(info) => {
-                  console.log(info);
-                }}
+              <InfiniteLoader
+                isItemLoaded={isItemLoaded}
+                itemCount={dayArray.length}
+                loadMoreItems={loadMoreItems}
               >
-                {Cell}
-              </Grid>
+                {({ onItemsRendered, ref }) => (
+                  <Grid
+                    ref={ref}
+                    columnCount={dayArray.length}
+                    rowCount={1}
+                    columnWidth={dayFontSize / 5 + dayFontSize}
+                    rowHeight={80}
+                    height={500}
+                    width={1400}
+                    // onScroll={(info) => {
+                    //   console.log(info);
+                    // }}
+
+                    // reference link at https://stackblitz.com/edit/react-list-counter
+                    onItemsRendered={(info) => {
+                      console.log(
+                        info.visibleColumnStartIndex,
+                        info.visibleColumnStopIndex
+                      );
+                      setRangeStart(info.visibleColumnStartIndex);
+                      setRangeEnd(info.visibleColumnStopIndex);
+                    }}
+                  >
+                    {Cell}
+                  </Grid>
+                )}
+              </InfiniteLoader>
             ) : null}
           </DaysWrapper>
         </DaysWrapperScroll>
       </motion.div>
-      <MarkEventLayout
+      {/* <MarkEventLayout
         style={{ zIndex: mEvent ? 5 : -100, opacity: mEvent ? 1 : 0 }}
         animate={{
           opacity: mEvent ? 1 : 0,
@@ -372,8 +512,8 @@ const Tester = (props) => {
         >
           Click!
         </div>
-      </MarkEventLayout>
-      <BtnWrapper>
+      </MarkEventLayout> */}
+      {/* <BtnWrapper>
         <MarkEvent
           style={{ opacity: mMilestone ? 0.3 : 1 }}
           onClick={() => {
@@ -397,34 +537,16 @@ const Tester = (props) => {
         >
           +
         </MarkMilestone>
-      </BtnWrapper>
-      <motion.div
-        animate={
-          {
-            // scale: profile.name === "" ? 1 : 0.7,
-            // opacity: profile.name === "" ? 1 : 0,
-          }
-        }
-        transition={
-          {
-            // duration: 1,
-          }
-        }
-      >
-        {/* <Profile></Profile> */}
-      </motion.div>
-      <Basic />
-    </TimelineWrapper>
+      </BtnWrapper> */}
+
+      {/* <Profile></Profile> */}
+
+      {/* <Basic /> */}
+    </div>
   );
 };
 
 export default Tester;
-
-const TimelineWrapper = styled.div`
-  width: auto;
-  height: 100vh;
-  color: white;
-`;
 
 const TimelineTitle = styled.div`
   width: 94vw;
@@ -435,7 +557,7 @@ const TimelineTitle = styled.div`
   color: white;
   z-index: 1;
 
-  .horizontal-slider {
+  .horizontalSlider {
     position: absolute;
     margin-left: 50vw;
     right: 0;
@@ -509,6 +631,19 @@ const DaysWrapper = styled.div`
   justify-content: space-between;
   z-index: 1000;
   width: 92vw;
+
+  & ::-webkit-scrollbar {
+    height: 5px;
+    background-color: darkgrey;
+  }
+  & ::-webkit-scrollbar-thumb {
+    height: 5px;
+    background-color: darkgrey;
+  }
+  & ::-webkit-scrollbar-track {
+    height: 5px;
+    background-color: grey;
+  }
 `;
 
 const MarkEvent = styled.div`
