@@ -119,15 +119,23 @@ const Tester = (props) => {
   }, [eventArray]);
 
   const [timelineScale, setTimelineScale] = React.useState("days");
-  // const [timelineWidth, setTimelineWidth] = React.useState(
-  //   3 * diffInDaysNum + width * 0.08
-  // );
-  // const [dayFontGap, setDayFontGap] = React.useState(90);
+
   const [dayFontSize, setDayFontSize] = React.useState(90);
   React.useEffect(() => {}, [timelineScale]);
 
   const timelineRef = React.useRef(null);
   const [profileReady, setProfileReady] = React.useState(false);
+
+  const [size, setSize] = React.useState([0, 0]);
+
+  React.useLayoutEffect(() => {
+    function updateSize() {
+      setSize([window.innerWidth, window.innerHeight]);
+    }
+    window.addEventListener("resize", updateSize);
+    updateSize();
+    return () => window.removeEventListener("resize", updateSize);
+  }, []);
 
   const getRandomNum = (min, max) => {
     return Math.random() * (max - min) + min;
@@ -140,7 +148,7 @@ const Tester = (props) => {
       <motion.p
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1 }}
+        transition={{ duration: 0.5 }}
         style={{
           fontSize: (dayFontSize * 2) / 3 + 10 + "px",
           margin: 0,
@@ -270,8 +278,6 @@ const Tester = (props) => {
   //     setTimelineWidth(3 * diffInDaysNum + width * 0.08);
   //   }
   // }, [timelineScale]);
-  var wHeight = window.innerHeight;
-  var wWidth = window.innerWidth;
 
   const [rangeStart, setRangeStart] = React.useState();
   const [rangeEnd, setRangeEnd] = React.useState();
@@ -287,125 +293,52 @@ const Tester = (props) => {
         <motion.p>{profile.birthday}</motion.p>
         <motion.div
           className={styles.timelineBar}
-          style={{ width: wWidth - 220 }}
+          style={{ width: size[0] - 220 }}
         >
+          <motion.div
+            className={styles.timelineProgress}
+            initial={{ width: 0, left: 0 }}
+            animate={{ width: size[0] - 220 }}
+            transition={{ duration: 1.5, ease: "easeInOut" }}
+          ></motion.div>
           <motion.div
             className={styles.timelineRange}
             style={{
               width: rangeEnd - rangeStart,
-              left: ((wWidth - 220) * rangeStart) / dayArray.length,
+              left: ((size[0] - 220) * rangeStart) / dayArray.length,
             }}
           ></motion.div>
+
           {eventArray.map((item, index) => {
             return (
               <motion.div
                 className={styles.timelineEvent}
                 style={{
-                  left: ((wWidth - 220) * item.dayIndex) / dayArray.length,
+                  left: ((size[0] - 220) * item.dayIndex) / dayArray.length,
                 }}
-              ></motion.div>
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                whileHover={{ scale: 2 }}
+                transition={{ duration: 1, delay: 0.2 * index }}
+              >
+                <div className={styles.timelineEventMargin}></div>
+              </motion.div>
             );
           })}
         </motion.div>
         <motion.p>{todayDate}</motion.p>
       </div>
       <div className={styles.controlWrapper}>
-        <TimelineScaleBtn
-        // onClick={() => {
-        //   console.log(timelineScale);
-        //   if (timelineScale === "years") {
-        //     setTimelineScale("days");
-        //   } else if (timelineScale === "days") {
-        //     setTimelineScale("months");
-        //   } else if (timelineScale === "months") {
-        //     setTimelineScale("years");
-        //   }
-        // }}
-        >
-          {timelineScale}
-        </TimelineScaleBtn>
-        <ReactSlider
-          className={styles.horizontalSlider}
-          thumbClassName="thumb"
-          trackClassName="track"
-          min={1}
-          renderThumb={(props, state) => (
-            <div
-              {...props}
-              style={{
-                cursor: "pointer",
-                border: "5px solid white",
-                padding: 4,
-                // display: "block",
-                // position: "absolute",
-              }}
-            >
-              {state.valueNow}
-            </div>
-          )}
-          renderTrack={(props, state) => (
-            <div {...props} style={{ height: 7, width: "30vw" }}></div>
-          )}
-          defaultValue={100}
-          onChange={(state) => {
-            // console.log(state);
-            setDayFontSize((90 * state) / 100);
-            if (state > 50) {
-              setTimelineScale("days");
-            } else if (state <= 50 && state > 20) {
-              setTimelineScale("months");
-            } else {
-              setTimelineScale("years");
-            }
-          }}
-        />
-      </div>
-
-      <motion.div
-        initial={{ y: 0 }}
-        animate={{
-          y: mEvent === true || mMilestone === true ? -height * 0.4 : 0,
-        }}
-        transition={{ duration: 1 }}
-      >
-        {/* <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: profileReady ? 1 : 0 }}
-          transition={{ duration: 1 }}
-        >
-          <TimelineTitle>
-            <h1>
-              <Link to="/" style={{ textDecoration: "none", color: "white" }}>
-                {profile.name}*
-                <br />
-                LIFE*LOG
-              </Link>
-            </h1>
-
-            <NavBottom daysNum={diffInDaysNum}></NavBottom>
-            <br />
-            <TimelineScaleBtn
-              onClick={() => {
-                console.log(timelineScale);
-                if (timelineScale === "years") {
-                  setTimelineScale("days");
-                } else if (timelineScale === "days") {
-                  setTimelineScale("months");
-                } else if (timelineScale === "months") {
-                  setTimelineScale("years");
-                }
-              }}
-            >
-              {timelineScale}
-            </TimelineScaleBtn>
+        <div className={styles.controlBack}>
+          <SliderWrapper>
             <ReactSlider
-              className="horizontal-slider"
+              className={styles.horizontalSlider}
               thumbClassName="thumb"
               trackClassName="track"
               min={1}
-              renderThumb={(props, state) => (
-                <div {...props}>{state.valueNow}</div>
-              )}
+              // renderThumb={(props, state) => (
+              //   <div {...props}>{state.valueNow}</div>
+              // )}
               defaultValue={100}
               onChange={(state) => {
                 // console.log(state);
@@ -419,42 +352,64 @@ const Tester = (props) => {
                 }
               }}
             />
-          </TimelineTitle>
-        </motion.div> */}
+          </SliderWrapper>
+          <motion.p className={styles.scaleStatus}>{timelineScale}</motion.p>
+          <motion.div
+            className={styles.addBtn}
+            style={{ background: "rgba(255, 255, 255, 0.03)" }}
+            whileHover={{ background: "rgba(255,255,255,0.06)", scale: 1.07 }}
+            transition={{ type: "spring" }}
+          >
+            +
+          </motion.div>
+        </div>
+      </div>
+
+      <motion.div
+        initial={{ y: 0 }}
+        animate={{
+          y: mEvent === true || mMilestone === true ? -height * 0.4 : 0,
+        }}
+        transition={{ duration: 1 }}
+      >
         <DaysWrapperScroll>
-          <DaysWrapper timelineScale={timelineScale}>
+          <DaysWrapper>
             {dayArray.length !== 0 ? (
               <InfiniteLoader
                 isItemLoaded={isItemLoaded}
                 itemCount={dayArray.length}
                 loadMoreItems={loadMoreItems}
               >
-                {({ onItemsRendered, ref }) => (
-                  <Grid
-                    ref={ref}
-                    columnCount={dayArray.length}
-                    rowCount={1}
-                    columnWidth={dayFontSize / 5 + dayFontSize}
-                    rowHeight={80}
-                    height={500}
-                    width={1400}
-                    // onScroll={(info) => {
-                    //   console.log(info);
-                    // }}
+                {({ onItemsRendered, ref }) => {
+                  gridRef.current = ref;
+                  return (
+                    <Grid
+                      ref={ref}
+                      columnCount={dayArray.length}
+                      rowCount={1}
+                      columnWidth={dayFontSize / 5 + dayFontSize}
+                      rowHeight={80}
+                      height={250}
+                      width={1400}
+                      // onScroll={(info) => {
+                      //   console.log(info);
+                      // }}
 
-                    // reference link at https://stackblitz.com/edit/react-list-counter
-                    onItemsRendered={(info) => {
-                      console.log(
-                        info.visibleColumnStartIndex,
-                        info.visibleColumnStopIndex
-                      );
-                      setRangeStart(info.visibleColumnStartIndex);
-                      setRangeEnd(info.visibleColumnStopIndex);
-                    }}
-                  >
-                    {Cell}
-                  </Grid>
-                )}
+                      // reference link at https://stackblitz.com/edit/react-list-counter
+                      onItemsRendered={(info) => {
+                        // console.log(
+                        //   info
+                        //   // info.visibleColumnStartIndex,
+                        //   // info.visibleColumnStopIndex
+                        // );
+                        setRangeStart(info.visibleColumnStartIndex);
+                        setRangeEnd(info.visibleColumnStopIndex);
+                      }}
+                    >
+                      {Cell}
+                    </Grid>
+                  );
+                }}
               </InfiniteLoader>
             ) : null}
           </DaysWrapper>
@@ -557,33 +512,6 @@ const TimelineTitle = styled.div`
   color: white;
   z-index: 1;
 
-  .horizontalSlider {
-    position: absolute;
-    margin-left: 50vw;
-    right: 0;
-    background: red;
-    z-index: 100;
-    display: flex;
-    width: 30vw;
-  }
-  .thumb {
-    cursor: pointer;
-    position: absolute;
-    z-index: 100;
-    background: black;
-    border: 5px solid #3774ff;
-    display: block;
-    margin-top: -15px;
-    padding: 4px;
-  }
-  .thumb.active {
-    background-color: grey;
-  }
-  .track {
-    background: white;
-    height: 3px;
-  }
-
   h1 {
     text-transform: uppercase;
     font-size: 15px;
@@ -600,16 +528,28 @@ const TimelineTitle = styled.div`
   }
 `;
 
-const TimelineScaleBtn = styled.div`
-  background: rgba(255, 255, 255, 0.05);
-  color: white;
-  width: 10vw;
-  margin: 0 auto;
-  cursor: pointer;
-  padding: 10px;
-  text-align: center;
-  &:hover {
-    background: rgba(255, 255, 255, 0.1);
+const SliderWrapper = styled.div`
+  background: red;
+
+  .thumb {
+    cursor: pointer;
+    position: absolute;
+    background: black;
+    border: 1px solid grey;
+    display: block;
+    height: 10px;
+    margin-top: -5px;
+    transition: 0.5s;
+  }
+  .thumb:hover {
+    border: 1px solid white;
+  }
+  .thumb.active {
+    background-color: grey;
+  }
+  .track {
+    background: white;
+    height: 1px;
   }
 `;
 
@@ -619,31 +559,28 @@ const DaysWrapperScroll = styled.div`
   position: relative;
 `;
 const DaysWrapper = styled.div`
-  // border-top: 1px solid white;
   height: 20vh;
-  //   background: red;
-  //   overflow-x: scroll;
   margin-left: 3vw;
   margin-right: 8vw;
   display: flex;
   position: absolute;
   top: 40vh;
   justify-content: space-between;
-  z-index: 1000;
+  z-index: 100;
   width: 92vw;
 
-  & ::-webkit-scrollbar {
-    height: 5px;
-    background-color: darkgrey;
-  }
-  & ::-webkit-scrollbar-thumb {
-    height: 5px;
-    background-color: darkgrey;
-  }
-  & ::-webkit-scrollbar-track {
-    height: 5px;
-    background-color: grey;
-  }
+  // & ::-webkit-scrollbar {
+  //   height: 5px;
+  //   background-color: darkgrey;
+  // }
+  // & ::-webkit-scrollbar-thumb {
+  //   height: 5px;
+  //   background-color: darkgrey;
+  // }
+  // & ::-webkit-scrollbar-track {
+  //   height: 5px;
+  //   background-color: grey;
+  // }
 `;
 
 const MarkEvent = styled.div`
