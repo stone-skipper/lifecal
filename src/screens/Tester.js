@@ -319,9 +319,20 @@ const Tester = (props) => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 whileHover={{ scale: 2 }}
-                transition={{ duration: 1, delay: 0.2 * index }}
+                transition={{ duration: 1, delay: 0.2 * index, type: "spring" }}
+                onClick={(info) => {
+                  gridRef.current.scrollToItem({
+                    align: "smart",
+                    columnIndex: item.dayIndex,
+                    rowIndex: 0,
+                  });
+                }}
               >
-                <div className={styles.timelineEventMargin}></div>
+                <motion.div
+                  className={styles.timelineEventMargin}
+                  initial={{ opacity: 0 }}
+                  whileHover={{ opacity: 0.1 }}
+                ></motion.div>
               </motion.div>
             );
           })}
@@ -381,10 +392,9 @@ const Tester = (props) => {
                 loadMoreItems={loadMoreItems}
               >
                 {({ onItemsRendered, ref }) => {
-                  gridRef.current = ref;
                   return (
                     <Grid
-                      ref={ref}
+                      ref={(ref, gridRef)}
                       columnCount={dayArray.length}
                       rowCount={1}
                       columnWidth={dayFontSize / 5 + dayFontSize}

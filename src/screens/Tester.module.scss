@@ -68,7 +68,10 @@
   .timelineEventMargin {
     width: 2px;
     height: 2px;
-    padding: 4px;
+    padding: 8px;
+    border-radius: 5px;
+    filter: blur(3px);
+    background: yellow;
   }
 }
 
