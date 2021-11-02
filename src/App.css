@@ -36,3 +36,28 @@
     transform: rotate(360deg);
   }
 }
+
+@font-face {
+  font-family: "Neue Machina";
+  src: local("Neue Machina"),
+    url(./media/fonts/NeueMachina-Regular.otf) format("opentype");
+}
+/* 
+@font-face {
+  font-family: "Neue Machina";
+  font-weight: 700;
+  src: local("Neue Machina"),
+    url(./media/fonts/NeueMachina-Black.otf) format("opentype");
+} */
+
+@font-face {
+  font-family: "Neue Montreal";
+  src: local("Neue Montreal"),
+    url(./media/fonts/NeueMontreal-Regular.otf) format("opentype");
+}
+
+@font-face {
+  font-family: "Monument Extended";
+  src: local("Monument Extended"),
+    url(./media/fonts/MonumentExtended-Regular.otf) format("opentype");
+}

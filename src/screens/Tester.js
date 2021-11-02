@@ -1,8 +1,7 @@
-import React, { Suspense } from "react";
+import * as React from "react";
 import styled from "styled-components";
 import Profile from "../components/Profile";
-import Basic from "../components/Basic";
-import NavBottom from "../components/NavBottom";
+
 import { motion } from "framer-motion";
 import { DateTime } from "luxon";
 import store from "../store";
@@ -34,7 +33,7 @@ const Tester = (props) => {
   const [profile, setProfile] = React.useState({
     name: "test",
     birthday: "1994-07-08",
-    color1: "#333333",
+    color1: "#60798A",
     color2: "#ffffff",
   });
 
@@ -44,6 +43,8 @@ const Tester = (props) => {
   const [milestoneArray, setMilestoneArray] = React.useState([]);
   const [mEvent, setMEvent] = React.useState(false);
   const [mMilestone, setMMilestone] = React.useState(false);
+  const [mode, setMode] = React.useState("timeline");
+  const [colorMode, setColorMode] = React.useState("black");
   const eventTitleRef = React.useRef(null);
   const eventDateRef = React.useRef(null);
 
@@ -143,20 +144,52 @@ const Tester = (props) => {
 
   const gridRef = React.createRef();
 
-  const DayItem = ({ children }) => {
+  const DayItem = ({ children, index, timelineScale }) => {
     return (
-      <motion.p
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
+      <motion.div
         style={{
-          fontSize: (dayFontSize * 2) / 3 + 10 + "px",
-          margin: 0,
-          // fontFamily: "'Syne', sans-serif",
+          width: "100%",
+          textAlign: "center",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          flexDirection: "column",
         }}
       >
-        {children}
-      </motion.p>
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          style={{
+            width: timelineScale === "years" ? 1 : 3,
+            height:
+              timelineScale === "days"
+                ? 200
+                : 200 - parseInt(dayArray[index].toString().substring(8, 10)),
+
+            background:
+              eventIndexedArray[index] !== undefined
+                ? "linear-gradient(0deg, rgba(255, 255, 255, 1) 13.61%, rgba(255, 255, 255, 0) 64.77%)"
+                : "linear-gradient(0deg, rgba(96, 121, 138, 0.8) 13.61%, rgba(96, 121, 138, 0) 64.77%)",
+          }}
+        ></motion.div>
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          style={{
+            fontSize: (dayFontSize * 2) / 3 + 10 + "px",
+            margin: 0,
+            textAlign: "center",
+            color:
+              eventIndexedArray[index] !== undefined ? "white" : profile.color1,
+            // fontFamily: "'Syne', sans-serif",
+            paddingTop: 10,
+          }}
+        >
+          {children}
+        </motion.p>
+      </motion.div>
     );
   };
 
@@ -178,6 +211,7 @@ const Tester = (props) => {
       }, 100)
     );
   };
+
   const MonthTranslator = (numDate) => {
     var monthFirst =
       numDate.toLocal().monthShort + " " + numDate.toLocal().year;
@@ -189,78 +223,39 @@ const Tester = (props) => {
       {/* heading */}
       {timelineScale === "days" ? (
         <>
-          <div
-            style={{
-              width: "1px",
-              height: 100,
-              position: "absolute",
-              // width:
-              //   parseInt(dayArray[columnIndex].toString().substring(8, 10)) +
-              //   "px",
-              // height:
-              //   parseInt(dayArray[columnIndex].toString().substring(8, 10)) +
-              //   "px",
-              background: "white",
-            }}
-          ></div>
-          <p style={{ fontSize: "10px" }}>
+          {/* <p style={{ fontSize: "10px" }}>
             {dayArray[columnIndex].toString().substring(8, 10) === "01" ||
             dayArray[columnIndex].toString().substring(0, 10) ===
               profile.birthday
               ? dayArray[columnIndex].toString().substring(0, 7)
               : null}
-          </p>
+          </p> */}
 
-          <DayItem>{dayArray[columnIndex].toString().substring(8, 10)}</DayItem>
-        </>
-      ) : null}
-      {timelineScale === "months" &&
-      (dayArray[columnIndex].toString().substring(8, 10) === "01" ||
-        dayArray[columnIndex].toString().substring(0, 10) ===
-          profile.birthday ||
-        dayArray[columnIndex].toString().substring(0, 10) === todayDate) ? (
-        <>
-          <div
-            style={{
-              width: "1px",
-              height: 100,
-              position: "absolute",
-              // width:
-              //   parseInt(dayArray[columnIndex].toString().substring(8, 10)) +
-              //   "px",
-              // height:
-              //   parseInt(dayArray[columnIndex].toString().substring(8, 10)) +
-              //   "px",
-              background: "white",
-            }}
-          ></div>
-          <DayItem>
-            {/* {dayArray[columnIndex].toString().substring(0, 7)} */}
-            {MonthTranslator(dayArray[columnIndex])}
+          <DayItem index={columnIndex} timelineScale={timelineScale}>
+            {dayArray[columnIndex].toString().substring(8, 10)}
           </DayItem>
         </>
-      ) : (
-        <div
-          style={{
-            width: "1px",
-            height: 100,
-            position: "absolute",
-            // width:
-            //   parseInt(dayArray[columnIndex].toString().substring(8, 10)) +
-            //   "px",
-            // height:
-            //   parseInt(dayArray[columnIndex].toString().substring(8, 10)) +
-            //   "px",
-            background: "white",
-          }}
-        ></div>
-      )}
+      ) : null}
+      {timelineScale === "months" ? (
+        <DayItem index={columnIndex} timelineScale={timelineScale}>
+          {dayArray[columnIndex].toString().substring(8, 10) === "01" ||
+          dayArray[columnIndex].toString().substring(0, 10) ===
+            profile.birthday ||
+          dayArray[columnIndex].toString().substring(0, 10) === todayDate
+            ? MonthTranslator(dayArray[columnIndex])
+            : null}
+        </DayItem>
+      ) : null}
 
-      {timelineScale === "years" &&
-      (dayArray[columnIndex].toString().substring(0, 10) === profile.birthday ||
-        dayArray[columnIndex].toString().substring(5, 10) === "01-01" ||
-        dayArray[columnIndex].toString().substring(0, 10) === todayDate) ? (
-        <DayItem> {dayArray[columnIndex].toString().substring(0, 4)}</DayItem>
+      {timelineScale === "years" ? (
+        <DayItem index={columnIndex} timelineScale={timelineScale}>
+          {dayArray[columnIndex].toString().substring(0, 10) ===
+            profile.birthday ||
+          dayArray[columnIndex].toString().substring(5, 10) === "01-01" ||
+          dayArray[columnIndex].toString().substring(0, 10) === todayDate
+            ? dayArray[columnIndex].toString().substring(0, 4)
+            : null}
+        </DayItem>
       ) : null}
 
       {eventIndexedArray[columnIndex] !== undefined
@@ -269,27 +264,20 @@ const Tester = (props) => {
     </div>
   );
 
-  // React.useEffect(() => {
-  //   if (timelineScale === "years") {
-  //     setTimelineWidth(width * 0.89);
-  //   } else if (timelineScale === "months") {
-  //     setTimelineWidth(width * 9);
-  //   } else if (timelineScale === "days") {
-  //     setTimelineWidth(3 * diffInDaysNum + width * 0.08);
-  //   }
-  // }, [timelineScale]);
+  // const [rangeStart, setRangeStart] = React.useState();
+  // const [rangeEnd, setRangeEnd] = React.useState();
+  const rangeStart = React.useRef();
+  const rangeEnd = React.useRef();
 
-  const [rangeStart, setRangeStart] = React.useState();
-  const [rangeEnd, setRangeEnd] = React.useState();
-
-  return (
-    <div className={styles.bodyWrapper}>
-      <div className={styles.topBar}>
-        <motion.p style={{ width: "50%" }}>{profile.name}'s lifelog</motion.p>
-        <motion.p style={{ width: "25%" }}>{diffInDaysNum} days</motion.p>
-        <motion.p style={{ width: "25%" }}>{eventArray.length} marks</motion.p>
-      </div>
-      <div className={styles.bottomBar}>
+  const TopBar = () => {};
+  const BottomBar = () => {
+    return (
+      <motion.div
+        className={styles.bottomBar}
+        initial={{ opacity: 0, y: -30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1, type: "spring" }}
+      >
         <motion.p>{profile.birthday}</motion.p>
         <motion.div
           className={styles.timelineBar}
@@ -304,8 +292,8 @@ const Tester = (props) => {
           <motion.div
             className={styles.timelineRange}
             style={{
-              width: rangeEnd - rangeStart,
-              left: ((size[0] - 220) * rangeStart) / dayArray.length,
+              width: rangeEnd.current - rangeStart.current,
+              left: ((size[0] - 220) * rangeStart.current) / dayArray.length,
             }}
           ></motion.div>
 
@@ -315,10 +303,11 @@ const Tester = (props) => {
                 className={styles.timelineEvent}
                 style={{
                   left: ((size[0] - 220) * item.dayIndex) / dayArray.length,
+                  background: profile.color1,
                 }}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                whileHover={{ scale: 2 }}
+                whileHover={{ scaleX: 2 }}
                 transition={{ duration: 1, delay: 0.2 * index, type: "spring" }}
                 onClick={(info) => {
                   gridRef.current.scrollToItem({
@@ -331,50 +320,111 @@ const Tester = (props) => {
                 <motion.div
                   className={styles.timelineEventMargin}
                   initial={{ opacity: 0 }}
-                  whileHover={{ opacity: 0.1 }}
-                ></motion.div>
+                  whileHover={{ opacity: 1 }}
+                >
+                  <motion.div
+                    className={styles.timelineEventHover}
+                    style={{
+                      opacity: 1,
+                      background:
+                        "linear-gradient(0deg, rgba(96, 121, 138, 0.8) 13.61%, rgba(96, 121, 138, 0) 64.77%)",
+                    }}
+                  ></motion.div>
+                </motion.div>
               </motion.div>
             );
           })}
         </motion.div>
         <motion.p>{todayDate}</motion.p>
-      </div>
-      <div className={styles.controlWrapper}>
-        <div className={styles.controlBack}>
-          <SliderWrapper>
-            <ReactSlider
-              className={styles.horizontalSlider}
-              thumbClassName="thumb"
-              trackClassName="track"
-              min={1}
-              // renderThumb={(props, state) => (
-              //   <div {...props}>{state.valueNow}</div>
-              // )}
-              defaultValue={100}
-              onChange={(state) => {
-                // console.log(state);
-                setDayFontSize((90 * state) / 100);
-                if (state > 50) {
-                  setTimelineScale("days");
-                } else if (state <= 50 && state > 20) {
-                  setTimelineScale("months");
-                } else {
-                  setTimelineScale("years");
-                }
-              }}
-            />
-          </SliderWrapper>
-          <motion.p className={styles.scaleStatus}>{timelineScale}</motion.p>
+      </motion.div>
+    );
+  };
+  return (
+    <div
+      className={styles.bodyWrapper}
+      style={{
+        background: colorMode === "black" ? "black" : profile.color1,
+      }}
+    >
+      <motion.div
+        className={styles.topBar}
+        initial={{ opacity: 0, y: -30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1, type: "spring" }}
+      >
+        <motion.div style={{ width: "50%" }}>
+          <motion.p>{profile.name}'s lifelog</motion.p>
+        </motion.div>
+        <motion.div style={{ width: "25%" }}>
+          <motion.p>{diffInDaysNum} days</motion.p>
+        </motion.div>
+        <motion.div style={{ width: "25%" }}>
+          <motion.p>{eventArray.length} marks</motion.p>
+        </motion.div>
+      </motion.div>
+      <BottomBar />
+      <motion.div
+        className={styles.controlCenter}
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1, type: "spring" }}
+      >
+        <div className={styles.controlWrapper}>
+          <div className={styles.scaleControl}>
+            <SliderWrapper>
+              <ReactSlider
+                className={styles.horizontalSlider}
+                thumbClassName="thumb"
+                trackClassName="track"
+                min={1}
+                defaultValue={100}
+                onChange={(state) => {
+                  // console.log(state);
+                  setDayFontSize((90 * state) / 100);
+                  if (state > 50) {
+                    setTimelineScale("days");
+                  } else if (state <= 50 && state > 20) {
+                    setTimelineScale("months");
+                  } else {
+                    setTimelineScale("years");
+                  }
+                }}
+              />
+            </SliderWrapper>
+            <motion.p className={styles.scaleStatus}>{timelineScale}</motion.p>
+          </div>
           <motion.div
             className={styles.addBtn}
-            style={{ background: "rgba(255, 255, 255, 0.03)" }}
-            whileHover={{ background: "rgba(255,255,255,0.06)", scale: 1.07 }}
+            style={{ background: "rgba(255, 255, 255, 0.08)" }}
+            whileHover={{ background: "rgba(255,255,255,0.15)", scale: 1.07 }}
             transition={{ type: "spring" }}
+            onClick={() => {
+              if (mode === "timeline") {
+                setMode("add");
+              } else {
+                setMode("timeline");
+              }
+            }}
+          >
+            +
+          </motion.div>
+          <motion.div
+            className={styles.swapBtn}
+            style={{ background: "rgba(255, 255, 255, 0.08)" }}
+            whileHover={{ background: "rgba(255,255,255,0.15)", scale: 1.07 }}
+            transition={{ type: "spring" }}
+            onClick={() => {
+              if (colorMode === "color") {
+                setColorMode("black");
+              } else {
+                setColorMode("color");
+              }
+            }}
           >
             +
           </motion.div>
         </div>
-      </div>
+      </motion.div>
 
       <motion.div
         initial={{ y: 0 }}
@@ -395,16 +445,15 @@ const Tester = (props) => {
                   return (
                     <Grid
                       ref={(ref, gridRef)}
-                      columnCount={dayArray.length}
+                      columnCount={dayArray.length + 50}
                       rowCount={1}
                       columnWidth={dayFontSize / 5 + dayFontSize}
                       rowHeight={80}
-                      height={250}
+                      height={400}
                       width={1400}
                       // onScroll={(info) => {
-                      //   console.log(info);
+                      //   console.log(gridRef.current);
                       // }}
-
                       // reference link at https://stackblitz.com/edit/react-list-counter
                       onItemsRendered={(info) => {
                         // console.log(
@@ -412,8 +461,11 @@ const Tester = (props) => {
                         //   // info.visibleColumnStartIndex,
                         //   // info.visibleColumnStopIndex
                         // );
-                        setRangeStart(info.visibleColumnStartIndex);
-                        setRangeEnd(info.visibleColumnStopIndex);
+                        // setRangeStart(info.visibleColumnStartIndex);
+                        // setRangeEnd(info.visibleColumnStopIndex);
+                        rangeStart.current = info.visibleColumnStartIndex;
+                        rangeEnd.current = info.visibleColumnStopIndex;
+                        console.log(rangeStart, rangeEnd);
                       }}
                     >
                       {Cell}
@@ -513,31 +565,6 @@ const Tester = (props) => {
 
 export default Tester;
 
-const TimelineTitle = styled.div`
-  width: 94vw;
-  height: 20vh;
-  position: fixed;
-  left: 3vw;
-  top: 2vw;
-  color: white;
-  z-index: 1;
-
-  h1 {
-    text-transform: uppercase;
-    font-size: 15px;
-    font-weight: 600;
-    padding-bottom: 3px;
-    width: fit-content;
-    position: absolute;
-    border-bottom: 2px solid rgba(255, 255, 255, 0);
-    transition: 0.5s;
-
-    &:hover {
-      border-bottom: 2px solid rgba(255, 255, 255, 1);
-    }
-  }
-`;
-
 const SliderWrapper = styled.div`
   background: red;
 
@@ -565,32 +592,32 @@ const SliderWrapper = styled.div`
 
 const DaysWrapperScroll = styled.div`
   width: 100vw;
-  padding-top: 45vh;
+  padding-top: 25vh;
   position: relative;
+  // display: none;
 `;
 const DaysWrapper = styled.div`
-  height: 20vh;
-  margin-left: 3vw;
-  margin-right: 8vw;
+  height: 40vh;
+  width: 100vw;
   display: flex;
   position: absolute;
-  top: 40vh;
+  top: 20vh;
+  left: 0;
   justify-content: space-between;
   z-index: 100;
-  width: 92vw;
 
-  // & ::-webkit-scrollbar {
-  //   height: 5px;
-  //   background-color: darkgrey;
-  // }
-  // & ::-webkit-scrollbar-thumb {
-  //   height: 5px;
-  //   background-color: darkgrey;
-  // }
-  // & ::-webkit-scrollbar-track {
-  //   height: 5px;
-  //   background-color: grey;
-  // }
+  & ::-webkit-scrollbar {
+    height: 3px;
+    background-color: transparent;
+  }
+  & ::-webkit-scrollbar-thumb {
+    height: 3px;
+    background-color: transparent;
+  }
+  & ::-webkit-scrollbar-track {
+    height: 3px;
+    background-color: transparent;
+  }
 `;
 
 const MarkEvent = styled.div`
