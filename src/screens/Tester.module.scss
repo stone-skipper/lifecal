@@ -13,6 +13,7 @@
   top: 0;
   display: flex;
   align-items: center;
+  z-index: 150;
   p {
     padding-left: 20px;
     font-size: 1.1em;
@@ -23,16 +24,16 @@
 }
 
 .bottomBar {
-  background: rgba(255, 255, 255, 0.05);
+  // background: rgba(255, 255, 255, 0.05);
   width: 100vw;
   height: 50px;
   position: absolute;
-  bottom: 0;
+  // bottom: 0;
   display: flex;
   font-size: 0.7em;
   justify-content: space-evenly;
   align-items: center;
-
+  z-index: 150;
   p {
     margin: 10px;
   }
@@ -42,7 +43,7 @@
   border-top: 2px solid transparent;
   height: 0;
   position: relative;
-  z-index: 50;
+  z-index: 200;
 }
 .timelineProgress {
   border-top: 2px solid #565656;
@@ -62,7 +63,7 @@
   height: 2px;
   position: absolute;
   top: -2px;
-  z-index: 60;
+  z-index: 220;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -84,7 +85,7 @@
   width: 100vw;
   position: absolute;
   bottom: 10vh;
-
+  z-index: 150;
   .addBtn {
     width: 40px;
     height: 40px;
@@ -140,7 +141,49 @@
   }
 }
 
+.dayItemWrapper {
+  .eventTitle {
+    margin-top: 1em;
+  }
+  .daysAgo {
+    opacity: 0;
+    font-size: 0.8em;
+  }
+  &:hover .daysAgo {
+    opacity: 0.5;
+    transition: 0.4s;
+  }
+  .dayAddItemBtn {
+    opacity: 0;
+    width: 1.8em;
+    height: 1.8em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border-radius: 0.9em;
+    line-height: 1.8em;
+    transition: 0.4s;
+  }
+  &:hover .dayAddItemBtn {
+    opacity: 0.8;
+  }
+  .dayAddItemBtn:hover {
+    opacity: 1;
+  }
+}
+
 .daysWrapperScroll {
 }
 .daysWrapper {
+}
+
+.addMarkWrapper {
+  width: 100vw;
+  height: 100vh;
+  background: blue;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 101;
 }
