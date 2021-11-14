@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import * as p5 from "p5";
+import { motion } from "framer-motion";
 
 const BackgroundCanvas = () => {
   const [size, setSize] = React.useState([
@@ -89,7 +90,7 @@ const BackgroundCanvas = () => {
       for (let i = 0; i < lines.length; i++) {
         // p.line(i, 0, i, size[1]);
 
-        lines[i].move();
+        // lines[i].move();
         lines[i].display();
 
         // p.setGradient(
@@ -120,16 +121,17 @@ const BackgroundCanvas = () => {
         this.y = p.random((size[1] * 1) / 4, (size[1] * 3) / 4);
         this.speed = 1;
         this.height = size[1] * p.random(0.2, 0.5);
+        this.index = index;
       }
 
       move() {
         // this.x += p.random(-this.speed, this.speed);
         // this.y += p.random(-this.speed, this.speed);
-        if (this.y < (size[1] * 3) / 4) {
-          this.y = this.y + this.speed * p.random(0.5, 1.5);
-        } else {
-          this.y = this.y - this.speed * p.random(0.5, 1.5);
-        }
+        // if (this.y < (size[1] * 3) / 4 && this.index === 2) {
+        //   this.y = this.y + this.speed * p.random(0.5, 1.5);
+        // } else {
+        //   // this.y = this.y - this.speed * p.random(0.5, 1.5);
+        // }
       }
 
       display() {
@@ -148,9 +150,12 @@ const BackgroundCanvas = () => {
   }, []);
 
   return (
-    <>
-      <div ref={p5ref} style={{ width: "100vw", height: "100vh" }}></div>
-    </>
+    <motion.div
+      ref={p5ref}
+      style={{ width: "100vw", height: "100vh" }}
+      animate={{ y: 200 }}
+      transition={{ duration: 3, repeatType: "reverse", repeat: Infinity }}
+    ></motion.div>
   );
 };
 

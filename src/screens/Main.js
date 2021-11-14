@@ -4,6 +4,7 @@ import Basic from "../components/Basic";
 import * as p5 from "p5";
 import { motion } from "framer-motion";
 import BackgroundCanvas from "../components/BackgroundCanvas";
+import Background from "../components/Background";
 
 import { Link } from "react-router-dom";
 
@@ -112,7 +113,11 @@ const Main = () => {
 
   return (
     <MainWrapper>
-      <BackgroundCanvas />
+      {/* <BackgroundCanvas /> */}
+      <Background />
+      <Background />
+      <Background />
+
       {/* <motion.div
         animate={{
           scale: anim ? 0.4 : 1,

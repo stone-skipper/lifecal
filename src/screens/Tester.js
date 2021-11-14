@@ -146,101 +146,26 @@ const Tester = (props) => {
   const DayItem = ({ children, index, timelineScale }) => {
     return (
       <>
-        {timelineScale !== "years" ? (
-          <motion.div
-            style={{
-              width: "100%",
-              textAlign: "center",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              flexDirection: "column",
-            }}
-            className={styles.dayItemWrapper}
-            whileHover={{ scale: 1.03 }}
-          >
+        {
+          timelineScale !== "years" ? (
             <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
               style={{
-                width: timelineScale === "years" ? 1 : 3,
-                height:
-                  timelineScale === "days"
-                    ? 200
-                    : 200 -
-                      parseInt(dayArray[index].toString().substring(8, 10)),
-                marginTop: eventIndexedArray[index] !== undefined ? 20 : 0,
-
-                background:
-                  eventIndexedArray[index] !== undefined
-                    ? "linear-gradient(0deg, rgba(255, 255, 255, 1) 13.61%, rgba(255, 255, 255, 0) 64.77%)"
-                    : "linear-gradient(0deg, rgba(96, 121, 138, 0.8) 13.61%, rgba(96, 121, 138, 0) 64.77%)",
-              }}
-            ></motion.div>
-            <motion.p
-              className={styles.eventMonth}
-              style={{
-                display:
-                  eventIndexedArray[index] !== undefined ? "block" : "none",
-              }}
-            >
-              {eventIndexedArray[index] !== undefined
-                ? MonthTranslator(dayArray[index])
-                : null}
-            </motion.p>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              style={{
-                fontSize: (dayFontSize * 2) / 3 + 10 + "px",
-                margin: 0,
+                width: "100%",
                 textAlign: "center",
-                color:
-                  eventIndexedArray[index] !== undefined
-                    ? "white"
-                    : profile.color1,
-                // fontFamily: "'Syne', sans-serif",
-                paddingTop: 10,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                flexDirection: "column",
               }}
+              className={styles.dayItemWrapper}
+              whileHover={{ scale: 1.03 }}
             >
-              {children}
-            </motion.p>
-            <motion.div
-              className={styles.dayAddItemBtn}
-              style={{
-                background: profile.color1,
-                display:
-                  eventIndexedArray[index] !== undefined ? "none" : "block",
-              }}
-              onClick={() => {
-                if (mode === "timeline") {
-                  setMode("add");
-                } else {
-                  setMode("timeline");
-                }
-              }}
-            >
-              {eventIndexedArray[index] !== undefined ? null : "+"}
-            </motion.div>
-            <motion.div className={styles.eventTitle}>
-              {eventIndexedArray[index] !== undefined
-                ? eventIndexedArray[index].title
-                : null}
-            </motion.div>
-            <motion.p className={styles.daysAgo}>
-              {eventIndexedArray[index] !== undefined
-                ? diffInDaysNum - index + " days ago"
-                : null}
-            </motion.p>
-          </motion.div>
-        ) : (
-          <>
-            {eventIndexedArray[index] !== undefined ? (
               <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
                 style={{
-                  width: 2,
+                  width: timelineScale === "years" ? 1 : 3,
                   height:
                     timelineScale === "days"
                       ? 200
@@ -249,22 +174,211 @@ const Tester = (props) => {
                   marginTop: eventIndexedArray[index] !== undefined ? 20 : 0,
 
                   background:
-                    "linear-gradient(0deg, rgba(255, 255, 255, 1) 13.61%, rgba(255, 255, 255, 0) 64.77%)",
+                    eventIndexedArray[index] !== undefined
+                      ? "linear-gradient(0deg, rgba(255, 255, 255, 1) 13.61%, rgba(255, 255, 255, 0) 64.77%)"
+                      : "linear-gradient(0deg, rgba(96, 121, 138, 0.8) 13.61%, rgba(96, 121, 138, 0) 64.77%)",
                 }}
               ></motion.div>
-            ) : null}
-            <motion.div className={styles.eventTitle}>
-              {eventIndexedArray[index] !== undefined
-                ? eventIndexedArray[index].title
-                : null}
+              <motion.p
+                className={styles.hoverRevealTag}
+                style={{
+                  color:
+                    eventIndexedArray[index] !== undefined
+                      ? "white"
+                      : profile.color1,
+                  opacity: eventIndexedArray[index] !== undefined ? 1 : 0,
+                  display:
+                    eventIndexedArray[index] !== undefined ? "block" : "none",
+                  marginTop: 8,
+                }}
+              >
+                {MonthTranslator(dayArray[index])}
+              </motion.p>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                style={{
+                  fontSize: (dayFontSize * 2) / 3 + 10 + "px",
+                  margin: 0,
+                  textAlign: "center",
+                  color:
+                    eventIndexedArray[index] !== undefined
+                      ? "white"
+                      : profile.color1,
+                  // fontFamily: "'Syne', sans-serif",
+                  paddingTop: 10,
+                }}
+              >
+                {children}
+              </motion.p>
+              <motion.div
+                className={styles.dayAddItemBtn}
+                data-index={index}
+                style={{
+                  background: profile.color1,
+                  display:
+                    eventIndexedArray[index] !== undefined ? "none" : "block",
+                }}
+                onClick={(e) => {
+                  console.log(e.target.getAttribute("data-index"));
+                  // console.log(info, info.view.name);
+                  if (mode === "timeline") {
+                    setMode("add");
+                  } else {
+                    setMode("timeline");
+                  }
+                }}
+              >
+                {eventIndexedArray[index] !== undefined ? null : "+"}
+              </motion.div>
+              <motion.div className={styles.eventTitle}>
+                {eventIndexedArray[index] !== undefined
+                  ? eventIndexedArray[index].title
+                  : null}
+              </motion.div>
+              <motion.p className={styles.daysAgo}>
+                {eventIndexedArray[index] !== undefined
+                  ? diffInDaysNum - index + " days ago"
+                  : null}
+              </motion.p>
             </motion.div>
-            <motion.p className={styles.daysAgo}>
-              {eventIndexedArray[index] !== undefined
-                ? diffInDaysNum - index + " days ago"
-                : null}
-            </motion.p>
-          </>
-        )}
+          ) : null
+          // <>
+          //   {eventIndexedArray[index] !== undefined ? (
+          //     <motion.div
+          //       style={{
+          //         width: 2,
+          //         height:
+          //           timelineScale === "days"
+          //             ? 200
+          //             : 200 -
+          //               parseInt(dayArray[index].toString().substring(8, 10)),
+          //         marginTop: eventIndexedArray[index] !== undefined ? 20 : 0,
+          //         background:
+          //           "linear-gradient(0deg, rgba(255, 255, 255, 1) 13.61%, rgba(255, 255, 255, 0) 64.77%)",
+          //       }}
+          //     ></motion.div>
+          //   ) : null}
+          //   <motion.div className={styles.eventTitle}>
+          //     {eventIndexedArray[index] !== undefined
+          //       ? eventIndexedArray[index].title
+          //       : null}
+          //   </motion.div>
+          //   <motion.p className={styles.daysAgo}>
+          //     {eventIndexedArray[index] !== undefined
+          //       ? diffInDaysNum - index + " days ago"
+          //       : null}
+          //   </motion.p>
+          // </>
+        }
+      </>
+    );
+  };
+
+  const MonthItem = ({ children, index, timelineScale }) => {
+    return (
+      <>
+        <motion.div
+          style={{
+            width: "100%",
+            textAlign: "center",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: "column",
+          }}
+          className={styles.dayItemWrapper}
+          whileHover={{ scale: 1.03 }}
+        >
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            style={{
+              width: 3,
+              height:
+                200 - parseInt(dayArray[index].toString().substring(8, 10)),
+              marginTop: eventIndexedArray[index] !== undefined ? 20 : 0,
+
+              background:
+                eventIndexedArray[index] !== undefined
+                  ? "linear-gradient(0deg, rgba(255, 255, 255, 1) 13.61%, rgba(255, 255, 255, 0) 64.77%)"
+                  : "linear-gradient(0deg, rgba(96, 121, 138, 0.8) 13.61%, rgba(96, 121, 138, 0) 64.77%)",
+            }}
+          ></motion.div>
+          <motion.p
+            className={styles.hoverRevealTag}
+            style={{
+              fontSize: (dayFontSize * 1) / 3 + 6 + "px",
+
+              color:
+                eventIndexedArray[index] !== undefined
+                  ? "white"
+                  : profile.color1,
+              opacity: eventIndexedArray[index] !== undefined ? 1 : 0,
+              display:
+                eventIndexedArray[index] !== undefined ? "block" : "none",
+              marginBottom: 4,
+              marginTop: 10,
+            }}
+          >
+            {/* {MonthTranslator(dayArray[index])}
+            <br /> */}
+            {dayArray[index].toString().substring(8, 10)}
+          </motion.p>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            style={{
+              fontSize: (dayFontSize * 1) / 3 + 10 + "px",
+              margin: 0,
+              width: 10,
+              textAlign: "left",
+              position: "absolute",
+              top: 250,
+              lineHeight: 1.3,
+              color:
+                eventIndexedArray[index] !== undefined
+                  ? "white"
+                  : profile.color1,
+              paddingTop: 10,
+            }}
+          >
+            {children}
+          </motion.p>
+
+          <motion.div
+            className={styles.dayAddItemBtn}
+            data-index={index}
+            style={{
+              background: profile.color1,
+              display:
+                eventIndexedArray[index] !== undefined ? "none" : "block",
+            }}
+            onClick={(e) => {
+              console.log(e.target.getAttribute("data-index"));
+              if (mode === "timeline") {
+                setMode("add");
+              } else {
+                setMode("timeline");
+              }
+            }}
+          >
+            {eventIndexedArray[index] !== undefined ? null : "+"}
+          </motion.div>
+          <motion.div className={styles.eventTitle}>
+            {eventIndexedArray[index] !== undefined
+              ? eventIndexedArray[index].title
+              : null}
+          </motion.div>
+          <motion.p className={styles.daysAgo}>
+            {eventIndexedArray[index] !== undefined
+              ? diffInDaysNum - index + " days ago"
+              : null}
+          </motion.p>
+        </motion.div>
       </>
     );
   };
@@ -297,32 +411,59 @@ const Tester = (props) => {
   const Cell = ({ columnIndex, rowIndex, style }) => (
     <div style={style}>
       {/* heading */}
-      {timelineScale === "days" ? (
+      {timelineScale === "days" && dayArray[columnIndex] ? (
         <DayItem index={columnIndex} timelineScale={timelineScale}>
           {dayArray[columnIndex].toString().substring(8, 10)}
         </DayItem>
       ) : null}
-      {timelineScale === "months" ? (
-        <DayItem index={columnIndex} timelineScale={timelineScale}>
+      {timelineScale === "months" && dayArray[columnIndex] ? (
+        <MonthItem index={columnIndex} timelineScale={timelineScale}>
           {dayArray[columnIndex].toString().substring(8, 10) === "01" ||
           dayArray[columnIndex].toString().substring(0, 10) ===
             profile.birthday ||
           dayArray[columnIndex].toString().substring(0, 10) === todayDate
             ? MonthTranslator(dayArray[columnIndex])
             : null}
-        </DayItem>
+        </MonthItem>
       ) : null}
-
-      {timelineScale === "years" ? (
-        <DayItem index={columnIndex} timelineScale={timelineScale}>
+      {timelineScale === "years" && dayArray[columnIndex] && (
+        <>
           {dayArray[columnIndex].toString().substring(0, 10) ===
             profile.birthday ||
           dayArray[columnIndex].toString().substring(5, 10) === "01-01" ||
-          dayArray[columnIndex].toString().substring(0, 10) === todayDate
-            ? dayArray[columnIndex].toString().substring(0, 4)
-            : null}
-        </DayItem>
-      ) : null}
+          dayArray[columnIndex].toString().substring(0, 10) === todayDate ? (
+            <p>{dayArray[columnIndex].toString().substring(0, 4)}</p>
+          ) : null}
+          {eventIndexedArray[columnIndex] !== undefined ? (
+            <motion.div
+              style={{
+                width: 2,
+                height:
+                  timelineScale === "days"
+                    ? 200
+                    : 200 -
+                      parseInt(
+                        dayArray[columnIndex].toString().substring(8, 10)
+                      ),
+                marginTop:
+                  eventIndexedArray[columnIndex] !== undefined ? 20 : 0,
+                background:
+                  "linear-gradient(0deg, rgba(255, 255, 255, 1) 13.61%, rgba(255, 255, 255, 0) 64.77%)",
+              }}
+            ></motion.div>
+          ) : null}
+          <motion.div className={styles.eventTitle}>
+            {eventIndexedArray[columnIndex] !== undefined
+              ? eventIndexedArray[columnIndex].title
+              : null}
+          </motion.div>
+          <motion.p className={styles.daysAgo}>
+            {eventIndexedArray[columnIndex] !== undefined
+              ? diffInDaysNum - columnIndex + " days ago"
+              : null}
+          </motion.p>
+        </>
+      )}
     </div>
   );
 
@@ -331,12 +472,6 @@ const Tester = (props) => {
   const rangeStart = React.useRef();
   const rangeEnd = React.useRef();
 
-  const TopBar = () => {};
-  // const BottomBar = () => {
-  //   return (
-
-  //   );
-  // };
   return (
     <div
       className={styles.bodyWrapper}
@@ -350,11 +485,37 @@ const Tester = (props) => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1, type: "spring", delay: landingDelaySec }}
       >
+        <motion.div
+          className={styles.logo}
+          whileHover={{ rotate: 360 }}
+          transition={{ repeatType: Infinity, duration: 2 }}
+        >
+          <Link
+            to="/"
+            style={{
+              textDecoration: "none",
+              color: "white",
+            }}
+          >
+            *
+          </Link>
+        </motion.div>
         <motion.div style={{ width: "50%" }}>
           <motion.p>{profile.name}'s lifelog</motion.p>
         </motion.div>
         <motion.div style={{ width: "25%" }}>
-          <motion.p>{diffInDaysNum} days</motion.p>
+          <motion.p>
+            {diffInDaysNum.toLocaleString()}
+            {diffInDaysNum.toString().slice(-1) === "1" ? "st" : ""}
+            {diffInDaysNum.toString().slice(-1) === "2" ? "nd" : ""}
+            {diffInDaysNum.toString().slice(-1) === "3" ? "rd" : ""}
+            {diffInDaysNum.toString().slice(-1) !== "1" &&
+            diffInDaysNum.toString().slice(-1) !== "2" &&
+            diffInDaysNum.toString().slice(-1) !== "3"
+              ? "th"
+              : ""}{" "}
+            day
+          </motion.p>
         </motion.div>
         <motion.div style={{ width: "25%" }}>
           <motion.p>{eventArray.length} marks</motion.p>
@@ -533,37 +694,48 @@ const Tester = (props) => {
               >
                 {({ onItemsRendered, ref }) => {
                   return (
-                    <Grid
-                      ref={(ref, gridRef)}
-                      columnCount={dayArray.length + 50}
-                      rowCount={1}
-                      columnWidth={
-                        timelineScale !== "years"
-                          ? dayFontSize / 3 + dayFontSize
-                          : dayFontSize / 10
-                      }
-                      rowHeight={80}
-                      height={500}
-                      width={1400}
-                      // onScroll={(info) => {
-                      //   console.log(gridRef.current);
-                      // }}
-                      // reference link at https://stackblitz.com/edit/react-list-counter
-                      onItemsRendered={(info) => {
-                        // console.log(
-                        //   info
-                        //   // info.visibleColumnStartIndex,
-                        //   // info.visibleColumnStopIndex
-                        // );
-                        // setRangeStart(info.visibleColumnStartIndex);
-                        // setRangeEnd(info.visibleColumnStopIndex);
-                        rangeStart.current = info.visibleColumnStartIndex;
-                        rangeEnd.current = info.visibleColumnStopIndex;
-                        console.log(rangeStart, rangeEnd);
-                      }}
-                    >
-                      {Cell}
-                    </Grid>
+                    <div style={{ width: "fit-content" }}>
+                      <Grid
+                        ref={(ref, gridRef)}
+                        columnCount={dayArray.length + 50}
+                        rowCount={1}
+                        columnWidth={
+                          timelineScale !== "years"
+                            ? dayFontSize / 3 + dayFontSize
+                            : dayFontSize / 18
+                        }
+                        rowHeight={80}
+                        height={500}
+                        width={1400}
+                        // onScroll={(info) => {
+                        //   console.log(gridRef.current);
+                        // }}
+                        // reference link at https://stackblitz.com/edit/react-list-counter
+                        onItemsRendered={(info) => {
+                          // console.log(
+                          //   info
+                          //   // info.visibleColumnStartIndex,
+                          //   // info.visibleColumnStopIndex
+                          // );
+                          // setRangeStart(info.visibleColumnStartIndex);
+                          // setRangeEnd(info.visibleColumnStopIndex);
+                          rangeStart.current = info.visibleColumnStartIndex;
+                          rangeEnd.current = info.visibleColumnStopIndex;
+                          console.log(rangeStart, rangeEnd);
+                        }}
+                      >
+                        {Cell}
+                      </Grid>
+                      {timelineScale === "years" ? (
+                        <div
+                          style={{
+                            background: profile.color1,
+                            width: "100%",
+                            heigth: 30,
+                          }}
+                        ></div>
+                      ) : null}
+                    </div>
                   );
                 }}
               </InfiniteLoader>
@@ -687,7 +859,6 @@ const DaysWrapperScroll = styled.div`
   width: 100vw;
   padding-top: 25vh;
   position: relative;
-  // display: none;
 `;
 const DaysWrapper = styled.div`
   height: 40vh;
