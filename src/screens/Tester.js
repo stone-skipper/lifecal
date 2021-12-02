@@ -121,6 +121,7 @@ const Tester = (props) => {
   const [timelineScale, setTimelineScale] = React.useState("days");
 
   const [dayFontSize, setDayFontSize] = React.useState(90);
+  const [sliderValue, setSliderValue] = React.useState(0);
   React.useEffect(() => {}, [timelineScale]);
 
   const timelineRef = React.useRef(null);
@@ -427,7 +428,7 @@ const Tester = (props) => {
         </MonthItem>
       ) : null}
       {timelineScale === "years" && dayArray[columnIndex] && (
-        <>
+        <div style={styles.yearItemWrapper}>
           {dayArray[columnIndex].toString().substring(0, 10) ===
             profile.birthday ||
           dayArray[columnIndex].toString().substring(5, 10) === "01-01" ||
@@ -462,7 +463,7 @@ const Tester = (props) => {
               ? diffInDaysNum - columnIndex + " days ago"
               : null}
           </motion.p>
-        </>
+        </div>
       )}
     </div>
   );
@@ -625,6 +626,7 @@ const Tester = (props) => {
                 defaultValue={100}
                 onChange={(state) => {
                   // console.log(state);
+                  setSliderValue(state);
                   setDayFontSize((90 * state) / 100);
                   if (state > 50) {
                     setTimelineScale("days");
@@ -694,7 +696,10 @@ const Tester = (props) => {
               >
                 {({ onItemsRendered, ref }) => {
                   return (
-                    <div style={{ width: "fit-content" }}>
+                    <div
+                      className={styles.gridWrapper}
+                      style={{ width: "fit-content" }}
+                    >
                       <Grid
                         ref={(ref, gridRef)}
                         columnCount={dayArray.length + 50}
@@ -702,8 +707,9 @@ const Tester = (props) => {
                         columnWidth={
                           timelineScale !== "years"
                             ? dayFontSize / 3 + dayFontSize
-                            : dayFontSize / 18
+                            : ((size[0] * 0.94) / diffInDaysNum) * sliderValue
                         }
+                        className={styles.grid}
                         rowHeight={80}
                         height={500}
                         width={1400}

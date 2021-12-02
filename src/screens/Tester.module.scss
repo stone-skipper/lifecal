@@ -104,6 +104,9 @@
     opacity: 0;
   }
 }
+.grid > div > div {
+  padding-left: 3vw;
+}
 
 .controlCenter {
   width: 100vw;
@@ -204,6 +207,17 @@
   }
   .dayAddItemBtn:hover {
     opacity: 1;
+  }
+}
+
+.yearItemWrapper {
+  .daysAgo {
+    opacity: 0;
+    font-size: 0.8em;
+  }
+  &:hover .daysAgo {
+    opacity: 0.5;
+    transition: 0.4s;
   }
 }
 

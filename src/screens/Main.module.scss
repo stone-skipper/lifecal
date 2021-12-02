@@ -1,0 +1,49 @@
+.main {
+  width: fit-content;
+  height: 98vh;
+  padding: 0;
+  // overflow-x: scroll;
+  overflow-y: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  &::webkit-scrollbar {
+    display: none;
+  }
+}
+
+.header {
+  width: 94vw;
+  margin-left: 3vw;
+  color: white;
+  position: fixed;
+  top: 0;
+  left: 0;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  h1 {
+    width: 60vw;
+    font-size: 60px;
+    font-weight: 400;
+  }
+  p {
+    width: 30vw;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+}
+
+.btn {
+  width: fit-content;
+  height: fit-content;
+  background: rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  margin-left: 3vw;
+  margin-top: 30vh;
+  font-size: 30px;
+  &:hover {
+    background: rgba(255, 255, 255, 0.15);
+  }
+}

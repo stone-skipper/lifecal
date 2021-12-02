@@ -1,11 +1,9 @@
 import React from "react";
 import styled from "styled-components";
 import Basic from "../components/Basic";
-import * as p5 from "p5";
 import { motion } from "framer-motion";
-import BackgroundCanvas from "../components/BackgroundCanvas";
 import Background from "../components/Background";
-
+import styles from "./Main.module.scss";
 import { Link } from "react-router-dom";
 
 const Main = () => {
@@ -111,11 +109,18 @@ const Main = () => {
   //   };
   // }, []);
 
+  const addChunk = () => {
+    setInterval(() => {
+      return <Background />;
+    }, 1800);
+  };
+
+  React.useEffect(() => {
+    addChunk();
+  }, []);
+
   return (
-    <MainWrapper>
-      {/* <BackgroundCanvas /> */}
-      <Background />
-      <Background />
+    <div className={styles.main}>
       <Background />
 
       {/* <motion.div
@@ -127,101 +132,51 @@ const Main = () => {
       >
         <BG ref={p5ref}></BG>
       </motion.div> */}
-      <Basic></Basic>
-
-      <Content>
+      <div className={styles.header}>
         <motion.h1
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{
-            duration: 3,
+            duration: 2,
+            delay: 0,
           }}
         >
-          LIFE*LOG
+          life<span>*</span>log
         </motion.h1>
         <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{
-            duration: 3,
+            duration: 2,
             delay: 0.5,
           }}
         >
-          Calendar in a scale of your life. <br />
-          Mark your moments and milestones.
+          A calendar, in a scale of your life.
+          <br />
+          Mark your moments from your own history, <br />
+          or moments yet to come.
         </motion.p>
-        <StartBtn>
-          <Link
-            to={"/timelineView"}
-            style={{
-              display: "block",
-              textDecoration: "none",
-              color: "white",
-              width: "fit-content",
-
-              padding: "20px",
-            }}
-          >
-            →→Create yours→→
-          </Link>
-        </StartBtn>
-      </Content>
-    </MainWrapper>
+      </div>
+      <div className={styles.btn}>
+        <Link
+          to={"/tester"}
+          style={{
+            display: "block",
+            textDecoration: "none",
+            color: "white",
+            width: "fit-content",
+          }}
+        >
+          create<span>↗</span>
+        </Link>
+      </div>
+    </div>
   );
 };
 
 export default Main;
-const MainWrapper = styled.div`
-  width: fit-content;
-  height: 98vh;
-  padding: 0;
-  // overflow-x: scroll;
-  overflow-y: hidden;
-  position: absolute;
-  top: 0;
-  left: 0;
-
-  &::webkit-scrollbar {
-    display: none;
-  }
-`;
 
 const BG = styled.div`
   width: 500vw;
   height: 100vh;
-`;
-
-const Content = styled.div`
-  width: 50vw;
-  height: 80vh;
-  color: white;
-  position: fixed;
-  top: 0;
-  left: 0;
-  text-align: left;
-  font-weight: light;
-  h1 {
-    font-size: 100px;
-    font-weight: 400;
-    margin-left: 3vw;
-  }
-  p {
-    margin-left: 3.2vw;
-    margin-top: -4vh;
-    font-size: 15px;
-    line-height: 1.5;
-  }
-`;
-
-const StartBtn = styled.div`
-  width: fit-content;
-  height: fit-content;
-  font-style: italic;
-  background: rgba(255, 255, 255, 0.1);
-  cursor: pointer;
-  margin-left: 3vw;
-  margin-top: 30vh;
-  &:hover {
-    background: rgba(255, 255, 255, 0.15);
-  }
 `;

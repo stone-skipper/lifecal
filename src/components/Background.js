@@ -23,6 +23,7 @@ const Background = () => {
   var color1 = "#000000";
   var color2 = "#60798A";
   var lineWidth = 4;
+  var linesGap = 2;
 
   const getRandomNum = (min, max) => {
     return parseInt(Math.random() * (max - min) + min);
@@ -35,7 +36,7 @@ const Background = () => {
   };
 
   React.useEffect(() => {
-    lineCount.current = parseInt(size[0] / lineWidth + 1);
+    lineCount.current = parseInt(size[0] / (lineWidth + linesGap) / 5);
     var lineArrayCount = new Array(lineCount.current);
     for (var i = 0; i < lineArrayCount.length; i++) {
       lineArrayCount[i] = i;
@@ -52,17 +53,15 @@ const Background = () => {
 
   return (
     <motion.div
-      //   initial={{ opacity: 0 }}
-      //   animate={{ opacity: 1 }}
       style={{
         display: "flex",
         width: "100vw",
         height: size[1] / 6,
-        marginTop: size[1] / 8,
+        marginTop: size[1] / 10,
         flexDirection: "row",
         justifyContent: "center",
         alignItems: "center",
-        gap: 1,
+        gap: linesGap,
         overflow: "visible",
       }}
     >
@@ -70,16 +69,23 @@ const Background = () => {
         return (
           <motion.div
             key={index}
-            animate={{ y: item < 0 ? 200 : 0 }}
+            initial={{ opacity: 0 }}
+            // animate={{ y: item < 0 ? 200 : 0 }}
+            // transition={{
+            //   repeatType: "reverse",
+            //   repeat: Infinity,
+            //   duration: getRandomNum(10, 20),
+            //   delay: item < 0 ? getRandomNum(0, 3) : 0,
+            // }}
+            animate={{ y: 50, opacity: 1 }}
             transition={{
-              repeatType: "reverse",
-              repeat: Infinity,
-              duration: getRandomNum(10, 20),
-              delay: item < 0 ? getRandomNum(0, 3) : 0,
+              delay: index * 0.2,
+              duration: 2,
+              ease: "easeInOut",
             }}
             style={{
               width: lineWidth,
-              height: 300,
+              height: 300 - index,
               //   height: 300 * getRandomNum(1, 5) * 0.5,
               background:
                 "linear-gradient(0deg, rgba(96, 121, 138, 0.8) 13.61%, rgba(96, 121, 138, 0) 64.77%)",
